@@ -25,15 +25,15 @@ public class Main {
 //			e.printStackTrace();
 //		}
 		
-		int getCostOfRandomRoute = getCostOfRoute((createRoute(5,generateRandomRoute())));
+		//int getCostOfRandomRoute = getCostOfRoute((createRoute(5,generateRandomRoute())));
 	
 		// System.out.println(Arrays.deepToString(createGraph()));
 	
 //		 System.out.println(getCostOfRoute(createRoute(4, "ADCB")));
 		//System.out.println(generateRandomRoute());
 		// System.out.println(getCostOfRandomRoute);
-		System.out.println(timedRoute(10000));
-		//System.out.println(System.currentTimeMillis()%10000);
+		System.out.println(timedRoute(10));
+		//System.out.println(System.currentTimeMillis());
 	}
 
 	public static void main(String[] args) {
@@ -103,6 +103,10 @@ public class Main {
 			
 			totalCost = totalCost + val;
 		}
+		
+		int firstCity = findGraphValue(route[0]);
+		int finalCity = findGraphValue(route[route.length - 1]);
+		totalCost = totalCost + graph[finalCity][firstCity];
 		return totalCost;
 	}
 
@@ -141,25 +145,26 @@ public class Main {
 			route = route + cities.get(randomCity);
 			cities.remove(randomCity);
 		}
-		route = route + 'A';
+		//route = route + 'A';
 		//System.out.println(route);
 		return route;
 	}
 	
 	private String timedRoute(int setTime){
-		long timeNow = System.currentTimeMillis();
-		long timer = timeNow + setTime;
-		int getCostOfRandomRoute;
-		int[] timedRouteCost = new int[1000];
-		String[] timedRouteName = new String[1000];
-		int i=0;
-		while(timeNow < timer){
-			generateRandomRoute();
-			getCostOfRandomRoute = getCostOfRoute((createRoute(5,generateRandomRoute())));
-			timedRouteCost[i] = getCostOfRandomRoute;
-			timedRouteName[i] = generateRandomRoute();
+		long timer = System.currentTimeMillis() + setTime;
+		int x=0;
+		int leastCost=100000;
+		String bestRoute = "";
+		while(System.currentTimeMillis() < timer){
+			String randomRoute = generateRandomRoute();
+			x = getCostOfRoute((createRoute(4,randomRoute)));
+			if(x<leastCost){
+				leastCost = x;
+				bestRoute = randomRoute;
+			}
 		}
-		return timedRouteName[i];
+		
+		return "Cheapest route to take is " + bestRoute + " and it costs " + leastCost;
 	}
 	
 	private void loadFile() throws FileNotFoundException{
