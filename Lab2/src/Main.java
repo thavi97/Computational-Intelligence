@@ -32,8 +32,10 @@ public class Main {
 //		 System.out.println(getCostOfRoute(createRoute(4, "ADCB")));
 		//System.out.println(generateRandomRoute());
 		// System.out.println(getCostOfRandomRoute);
-		System.out.println(timedRoute(10));
+		//System.out.println(timedRoute(1000));
 		//System.out.println(System.currentTimeMillis());
+		//System.out.println(System.currentTimeMillis());
+		System.out.println(twoOpt(generateRandomRoute()));
 	}
 
 	public static void main(String[] args) {
@@ -145,9 +147,25 @@ public class Main {
 			route = route + cities.get(randomCity);
 			cities.remove(randomCity);
 		}
-		//route = route + 'A';
-		//System.out.println(route);
 		return route;
+	}
+	
+	private char[] twoOpt(String route){
+		System.out.println(route);
+		Random generator = new Random(); 
+		char[] charRoute = route.toCharArray();
+		int i = generator.nextInt(route.length());
+		int u = i + 1;
+		
+		if(i == route.length()-1){
+			u = 0;
+		}
+		
+		char temp = charRoute[i];
+		charRoute[i] = charRoute[u];
+		charRoute[u] = temp;
+		return charRoute;	
+		
 	}
 	
 	private String timedRoute(int setTime){
@@ -196,7 +214,7 @@ public class Main {
 	
 		//TO DO
 		
-		for(int city1 = 0; city1<15; city1++) {
+		for(int city1 = 0; city1<16; city1++) {
 			for(int city2=0; city2<16; city2++) {
 				double minusX = Math.pow((xValue[city2]-xValue[city1]), 2);
 				double minusY = Math.pow((yValue[city2]-yValue[city1]), 2);
