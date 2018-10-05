@@ -20,12 +20,12 @@ public class Main {
 	public Main() {
 		
 		createGraph();
-//		try {
-//			loadFile();
-//		} catch (FileNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		try {
+			loadFile();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		//int getCostOfRandomRoute = getCostOfRoute((createRoute(5,generateRandomRoute())));
 	
@@ -38,7 +38,9 @@ public class Main {
 		//System.out.println(System.currentTimeMillis());
 		//System.out.println(System.currentTimeMillis());
 		//System.out.println(generateTwoOptNeighbour(generateRandomRoute()));
-		System.out.println(generateNeighbourhood(generateRandomRoute()));
+		//System.out.println(generateNeighbourhood(generateRandomRoute()));
+		//System.out.println(neighbourhoodStep(generateNeighbourhood(generateRandomRoute())));
+		System.out.println(randomLocalSearch(1000));
 	}
 
 	public static void main(String[] args) {
@@ -184,6 +186,39 @@ public class Main {
 			neighbourhood.add(generateTwoOptNeighbour(route));
 		}
 		return neighbourhood;
+	}
+	
+	//Step 4
+	private String neighbourhoodStep(Set<String> neighbourhood){
+		int x=0;
+		int leastCost=100000;
+		String bestRoute = "";
+		for(String route : neighbourhood){
+			String randomRoute = route;
+			x = getCostOfRoute((createRoute(4,randomRoute)));
+			if(x<leastCost){
+				leastCost = x;
+				bestRoute = randomRoute;
+			}
+		}
+		return bestRoute;
+	}
+	
+	//Step 5
+	private String randomLocalSearch(int setTime){
+		long timer = System.currentTimeMillis() + setTime;
+		int currentCost=0;
+		int leastCost=100000;
+		String bestRoute = "";
+		while(System.currentTimeMillis() < timer){
+			String randomRoute = neighbourhoodStep(generateNeighbourhood(generateRandomRoute()));
+			currentCost = getCostOfRoute((createRoute(4,randomRoute)));
+			if(currentCost<leastCost){
+				leastCost = currentCost;
+				bestRoute = randomRoute;
+			}
+		}
+		return "The best route is " + bestRoute + " and it costs " + leastCost;
 	}
 	
 	private String timedRoute(int setTime){
