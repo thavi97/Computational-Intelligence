@@ -3,8 +3,10 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.Set;
 
 public class Main {
 
@@ -35,7 +37,8 @@ public class Main {
 		//System.out.println(timedRoute(1000));
 		//System.out.println(System.currentTimeMillis());
 		//System.out.println(System.currentTimeMillis());
-		System.out.println(twoOpt(generateRandomRoute()));
+		//System.out.println(generateTwoOptNeighbour(generateRandomRoute()));
+		System.out.println(generateNeighbourhood(generateRandomRoute()));
 	}
 
 	public static void main(String[] args) {
@@ -43,6 +46,14 @@ public class Main {
 		new Main();
 		
 
+	}
+	
+	static int factorial(int n){
+		int res = 1, i;
+		for(i=2; i<=n; i++){
+			res *= i;
+		}
+		return res;
 	}
 
 	private int[][] createGraph() {
@@ -150,22 +161,29 @@ public class Main {
 		return route;
 	}
 	
-	private char[] twoOpt(String route){
-		System.out.println(route);
+	private String generateTwoOptNeighbour(String route){
 		Random generator = new Random(); 
 		char[] charRoute = route.toCharArray();
 		int i = generator.nextInt(route.length());
-		int u = i + 1;
+		int u = generator.nextInt(route.length());
 		
-		if(i == route.length()-1){
-			u = 0;
+		while(i == u){
+			u = generator.nextInt(route.length());
 		}
 		
 		char temp = charRoute[i];
 		charRoute[i] = charRoute[u];
 		charRoute[u] = temp;
-		return charRoute;	
-		
+		return new String(charRoute);
+	}
+	
+	private Set<String> generateNeighbourhood(String route){	
+		Set<String> neighbourhood = new HashSet<String>();
+		neighbourhood.add(route);
+		while(neighbourhood.size() < (factorial(route.length())/route.length()) + 1){
+			neighbourhood.add(generateTwoOptNeighbour(route));
+		}
+		return neighbourhood;
 	}
 	
 	private String timedRoute(int setTime){
