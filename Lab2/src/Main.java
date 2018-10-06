@@ -36,15 +36,10 @@ public class Main {
 		double randomSearchCSVCost = randomSearchCSV(300000);
 		System.out.println("Random Search: The best route is " + bestRouteRandomSearch + " and it costs " + randomSearchCSVCost);
 		//System.out.println(timedRouteCSV(2000));
-		
-		System.out.println(getCostOfRouteCSV([]));
 	}
 
-	public static void main(String[] args) {
-		
+	public static void main(String[] args) {	
 		new Main();
-		
-
 	}
 	
 	static int factorial(int n){
@@ -281,7 +276,7 @@ public class Main {
 		return bestRoute;
 	}
 
-	
+	//Performs a local search
 	private double localSearchCSV(int setTime){
 		long timer = System.currentTimeMillis() + setTime;
 		double currentCost=0.0;
