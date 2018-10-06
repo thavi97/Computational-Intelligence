@@ -2,7 +2,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Scanner;
@@ -16,12 +16,15 @@ public class Main {
 	private static int B = 1;
 	private static int C = 2;
 	private static int D = 3;
+	private Double[][] cityLocations;
+	private Double[] xValue;
+	private Double[] yValue;
 
 	public Main() {
 		
 		createGraph();
 		try {
-			loadFile();
+			loadFile(16);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -40,7 +43,13 @@ public class Main {
 		//System.out.println(generateTwoOptNeighbour(generateRandomRoute()));
 		//System.out.println(generateNeighbourhood(generateRandomRoute()));
 		//System.out.println(neighbourhoodStep(generateNeighbourhood(generateRandomRoute())));
-		System.out.println(randomLocalSearch(1000));
+		//System.out.println(Arrays.deepToString(cityLocations));
+		//System.out.println(generateRandomRouteCSV());
+		//System.out.println(getCostOfRouteCSV(generateRandomRouteCSV()));
+		//System.out.println(timedRouteCSV(20000));
+		//System.out.println(generateTwoOptNeighbourCSV(generateRandomRouteCSV()));
+		//System.out.println(generateNeighbourhoodCSV(generateRandomRouteCSV()));
+		System.out.println(randomLocalSearchCSV(30000));
 	}
 
 	public static void main(String[] args) {
@@ -179,11 +188,33 @@ public class Main {
 		return new String(charRoute);
 	}
 	
+	private ArrayList<Integer> generateTwoOptNeighbourCSV(ArrayList<Integer> route){
+		Random generator = new Random(); 
+		int i = generator.nextInt(route.size());
+		int u = generator.nextInt(route.size());
+		
+		while(i == u){
+			u = generator.nextInt(route.size());
+		}
+		
+		Collections.swap(route, i, u);
+		return route;
+	}
+	
 	private Set<String> generateNeighbourhood(String route){	
 		Set<String> neighbourhood = new HashSet<String>();
 		neighbourhood.add(route);
-		while(neighbourhood.size() < (factorial(route.length())/route.length()) + 1){
+		while(neighbourhood.size() < (((route.length()*(route.length() - 1))/2) + 1)){
 			neighbourhood.add(generateTwoOptNeighbour(route));
+		}
+		return neighbourhood;
+	}
+	
+	private Set<ArrayList> generateNeighbourhoodCSV(ArrayList<Integer> route){	
+		Set<ArrayList> neighbourhood = new HashSet<ArrayList>();
+		neighbourhood.add(route);
+		while(neighbourhood.size() < (((route.size()*(route.size() - 1))/2) + 1)){
+			neighbourhood.add(generateTwoOptNeighbourCSV(generateRandomRouteCSV()));
 		}
 		return neighbourhood;
 	}
@@ -196,6 +227,21 @@ public class Main {
 		for(String route : neighbourhood){
 			String randomRoute = route;
 			x = getCostOfRoute((createRoute(4,randomRoute)));
+			if(x<leastCost){
+				leastCost = x;
+				bestRoute = randomRoute;
+			}
+		}
+		return bestRoute;
+	}
+	
+	private ArrayList<Integer> neighbourhoodStepCSV(Set<ArrayList> neighbourhood){
+		double x=0.0;
+		double leastCost=100000.0;
+		ArrayList<Integer> bestRoute = null;
+		for(ArrayList<Integer> route : neighbourhood){
+			ArrayList<Integer> randomRoute = route;
+			x = getCostOfRouteCSV(generateRandomRouteCSV());
 			if(x<leastCost){
 				leastCost = x;
 				bestRoute = randomRoute;
@@ -221,6 +267,22 @@ public class Main {
 		return "The best route is " + bestRoute + " and it costs " + leastCost;
 	}
 	
+	private String randomLocalSearchCSV(int setTime){
+		long timer = System.currentTimeMillis() + setTime;
+		double currentCost=0.0;
+		double leastCost=100000.0;
+		ArrayList<Integer> bestRoute = null;
+		while(System.currentTimeMillis() < timer){
+			ArrayList<Integer> randomRoute = neighbourhoodStepCSV(generateNeighbourhoodCSV(generateRandomRouteCSV()));
+			currentCost = getCostOfRouteCSV(randomRoute);
+			if(currentCost<leastCost){
+				leastCost = currentCost;
+				bestRoute = randomRoute;
+			}
+		}
+		return "The best route is " + bestRoute + " and it costs " + leastCost;
+	}
+	
 	private String timedRoute(int setTime){
 		long timer = System.currentTimeMillis() + setTime;
 		int x=0;
@@ -238,28 +300,23 @@ public class Main {
 		return "Cheapest route to take is " + bestRoute + " and it costs " + leastCost;
 	}
 	
-	private void loadFile() throws FileNotFoundException{
+	private void loadFile(int arraySize) throws FileNotFoundException{
 		Scanner ulysses = new Scanner(new File("src\\ulysses16.csv"));
 		ulysses.useDelimiter("\n");
 		
-		Double[][] cityLocations = new Double[16][16]; 
-		Double[] xValue = new Double[16];
-		Double[] yValue = new Double[16];
-		
-		int i = 0;
+		cityLocations = new Double[arraySize][arraySize]; 
+		xValue = new Double[arraySize];
+		yValue = new Double[arraySize];
+
 		int num = 0;
 		while(ulysses.hasNext()){
 			char[] newLine = ulysses.next().trim().toCharArray();
 			if(Character.isDigit(newLine[0])){
-				String[] newline1 = new String(newLine).split(",");
-				xValue[num] =  Double.parseDouble(newline1[1]);
-				yValue[num] =  Double.parseDouble(newline1[2]);
+				String[] newLine1 = new String(newLine).split(",");
+				xValue[num] =  Double.parseDouble(newLine1[1]);
+				yValue[num] =  Double.parseDouble(newLine1[2]);
 				//System.out.print(xValue[i] + " " + yValue[i] + "| ");
 				num++;
-			}
-			
-			if(i < 18) {
-				i++;	
 			}
 			
 		}
@@ -277,6 +334,53 @@ public class Main {
 		}
 		System.out.println(Arrays.deepToString(cityLocations));
 		ulysses.close();
+	}
+	
+//	private void randomTour(int tourLength){
+//		int[] tour = new int[tourLength];
+//		while
+//	}
+	
+	private ArrayList<Integer> generateRandomRouteCSV() {
+		ArrayList<Integer> cities = new ArrayList<Integer>();
+		for(int i=0; i<cityLocations.length; i++){
+			cities.add(i);
+		}
+		
+		Collections.shuffle(cities);
+		return cities;
+	}
+	
+	private Double getCostOfRouteCSV(ArrayList<Integer> route) {
+		double totalCost = 0.0;
+		int startCity = 0;
+		int endCity = 0;
+		for(int i=0; i<route.size()-1; i++){
+			startCity = route.get(i);
+			endCity = route.get(i+1);
+			totalCost += cityLocations[startCity][endCity];	
+		}
+		int firstCity = route.get(0);
+		int nextCity = route.get(route.size()-1);
+		totalCost += cityLocations[nextCity][firstCity];
+		return totalCost;
+	}
+	
+	private String timedRouteCSV(int setTime){
+		long timer = System.currentTimeMillis() + setTime;
+		double x=0.0;
+		double leastCost=100000.0;
+		ArrayList<Integer> bestRoute = null;
+		while(System.currentTimeMillis() < timer){
+			ArrayList<Integer> randomRoute = generateRandomRouteCSV();
+			x = getCostOfRouteCSV(randomRoute);
+			if(x<leastCost){
+				leastCost = x;
+				bestRoute = randomRoute;
+			}
+		}
+		
+		return "Cheapest route to take is " + bestRoute + " and it costs " + leastCost;
 	}
 	
 }
