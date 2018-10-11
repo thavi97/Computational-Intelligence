@@ -30,10 +30,10 @@ public class Main {
 			e.printStackTrace();
 		}
 		
-		double localSearchCSVCost = localSearchCSV(300000);
+		double localSearchCSVCost = localSearchCSV(2700000);
 		System.out.println("Local Search: The best route is " + bestRouteLocalSearch + " and it costs " + localSearchCSVCost);
 		
-		double randomSearchCSVCost = randomSearchCSV(300000);
+		double randomSearchCSVCost = randomSearchCSV(2700000);
 		System.out.println("Random Search: The best route is " + bestRouteRandomSearch + " and it costs " + randomSearchCSVCost);
 		//System.out.println(timedRouteCSV(2000));
 	}
@@ -262,14 +262,14 @@ public class Main {
 	
 	// Finds the shortest tour within a randomly generated neighbourhood.
 	private ArrayList<Integer> bestNeighbourStepCSV(Set<ArrayList<Integer>> neighbourhood){
-		double x=0.0;
+		double currentCost=0.0;
 		double leastCost=100000.0;
 		ArrayList<Integer> bestRoute = null;
 		for(ArrayList<Integer> route : neighbourhood){
 			ArrayList<Integer> storeRoute = route;
-			x = getCostOfRouteCSV(route);
-			if(x<leastCost){
-				leastCost = x;
+			currentCost = getCostOfRouteCSV(route);
+			if(currentCost<leastCost){
+				leastCost = currentCost;
 				bestRoute = storeRoute;
 			}
 		}
@@ -322,14 +322,14 @@ public class Main {
 	
 	private double randomSearchCSV(int setTime){
 		long timer = System.currentTimeMillis() + setTime;
-		double x=0.0;
+		double currentCost=0.0;
 		double leastCost=100000.0;
 		bestRouteRandomSearch = null;
 		while(System.currentTimeMillis() < timer){
 			ArrayList<Integer> randomRoute = generateRandomRouteCSV();
-			x = getCostOfRouteCSV(randomRoute);
-			if(x<leastCost){
-				leastCost = x;
+			currentCost = getCostOfRouteCSV(randomRoute);
+			if(currentCost<leastCost){
+				leastCost = currentCost;
 				bestRouteRandomSearch = randomRoute;
 			}
 		}
