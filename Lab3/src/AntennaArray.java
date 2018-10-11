@@ -22,9 +22,11 @@ public class AntennaArray {
    */
     public double[][] bounds() {
         double[][] bnds = new double[n_antennae][2];
-        double[] dim_bnd = {0.0,((double)n_antennae)/2.0};
-        for(int i = 0;i<n_antennae;++i)
+        double[] dim_bnd = {MIN_SPACING,(((double)n_antennae)/2.0)-MIN_SPACING};
+        for(int i = 0;i<n_antennae-1;++i)
             bnds[i] = dim_bnd;
+        bnds[n_antennae-1][0] = (double)n_antennae/2;
+        bnds[n_antennae-1][1] = (double)n_antennae/2;
         return bnds;
     }
     /**

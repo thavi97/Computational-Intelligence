@@ -10,8 +10,9 @@ public class ParticleSwarmOptimisation {
 	
 	public ParticleSwarmOptimisation() {
 		this.antennaArray = new AntennaArray(antennaeNum, steeringAngle);
-		generateAntennaePositions();
-//		randomSearchPeakSSL(10000);
+		//System.out.println(generateAntennaePositions());
+		System.out.println(randomSearchPeakSSL(10000));
+		
 	}
 
 	public static void main(String[] args) {	
@@ -30,22 +31,23 @@ public class ParticleSwarmOptimisation {
 		design[antennaeNum-1] = aperture;
 		}
 		double peakSLL = antennaArray.evaluate(design);
-		System.out.println(Arrays.toString(design));
-		System.out.println(peakSLL);
 		return design;
 	}
 	
-	private double[] randomSearchPeakSSL(long setTime) {
+	private double randomSearchPeakSSL(long setTime) {
 		long timer = System.currentTimeMillis() + setTime;
-		double peakSLL = antennaArray.evaluate(generateAntennaePositions());
+		double[] antenna = generateAntennaePositions();
+		double[] newAntenna = null;
+		double peakSLL = antennaArray.evaluate(antenna);
 		while(System.currentTimeMillis() < timer){
-			double newPeakSSL = antennaArray.evaluate(generateAntennaePositions());
-			if(newPeakSSL < peakSSL) {
-				
+			newAntenna = generateAntennaePositions();
+			double newPeakSLL = antennaArray.evaluate(newAntenna);
+			if(Math.abs(newPeakSLL) < Math.abs(peakSLL)) {
+				peakSLL = newPeakSLL;
 			}
-			antennaArray.evaluate(generateAntennaePositions());
 		}
-		return null;
+		System.out.println(Arrays.toString(newAntenna));
+		return peakSLL;
 	}
 
 }
