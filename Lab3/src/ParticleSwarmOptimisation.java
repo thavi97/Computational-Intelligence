@@ -3,20 +3,23 @@ import java.util.Arrays;
 public class ParticleSwarmOptimisation {
 	
 	private AntennaArray antennaArray;
-	private int antennaeNum = 3;
-	private double steeringAngle = 90;
-	private double aperture = (double)antennaeNum/2;
+	private int antennaeNum;
+	private double steeringAngle;
+	private double aperture;
 	private double minSpacing = antennaArray.MIN_SPACING;
 	
-	public ParticleSwarmOptimisation() {
+	public ParticleSwarmOptimisation(int antennaeNum, double steeringAngle) {
+		this.antennaeNum = antennaeNum;
+		this.steeringAngle = steeringAngle;
+		this.aperture = (double)antennaeNum/2;
 		this.antennaArray = new AntennaArray(antennaeNum, steeringAngle);
 		//System.out.println(generateAntennaePositions());
-		System.out.println(randomSearchPeakSLL(10000));
+		System.out.println(randomSearchPeakSLL(5000));
 		
 	}
 
 	public static void main(String[] args) {	
-		new ParticleSwarmOptimisation();
+		new ParticleSwarmOptimisation(3, 90);
 	}
 	
 	private double[] generateAntennaePositions(){
@@ -48,5 +51,7 @@ public class ParticleSwarmOptimisation {
 		System.out.println(Arrays.toString(newAntenna));
 		return peakSLL;
 	}
+	
+	
 
 }
