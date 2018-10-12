@@ -6,6 +6,7 @@ public class Particle {
 	private double[] velocity;
 	private double[] pBest;
 	private double[] gBest;
+	private double[] nextVelocity;
 	private AntennaArray antennaArray;
 	private int antennaeNum;
 	private double aperture;
@@ -25,7 +26,9 @@ public class Particle {
 		System.out.println("Initial Velocity = " + Arrays.toString(velocity));
 		pBest = position;
 		gBest = generateRandomPosition();
-		getNextVelocity();
+		nextVelocity = getNextVelocity();
+		System.out.println("Next Velocity = " + Arrays.toString(nextVelocity));
+		System.out.println("Next Position = " + Arrays.toString(moveNext()));
 		
 	}
 	
@@ -57,10 +60,15 @@ public class Particle {
 		return newPosition;
 	}
 	
-	//Move the particle to the next position
-//	private double[] moveNext(){
-//		
-//	}
+	//Move the particle to the next position.
+	//Current position + next velocity
+	private double[] moveNext(){
+		double[] nextPosition = new double[antennaeNum];
+		for(int i = 0; i<antennaeNum-1; i++){
+			nextPosition[i] = position[i] + nextVelocity[i];
+		}
+		return nextPosition;
+	}
 	
 	private double[] getNextVelocity(){
 		double[] nextVelocity = new double[antennaeNum];
@@ -74,9 +82,8 @@ public class Particle {
 			cognitive[i] = phi1*r1[i]*(pBest[i]-position[i]); 
 			social[i] = phi2*r2[i]*(gBest[i]-position[i]); 
 			nextVelocity[i] = inertia[i] + cognitive[i] + social[i];
-		}
-		
-		System.out.println(Arrays.toString(nextVelocity));
+		}	
+
 		return nextVelocity;
 		
 	}
@@ -88,39 +95,9 @@ public class Particle {
 			Random r = new Random();
 			randomVector[i] = r.nextDouble();
 		}
-		System.out.println(Arrays.toString(randomVector));
+
 		return randomVector;
 	}
 	
-//	private double[] generateRandomVelocity(){
-//		
-//	}
-//	
-//	private double[] getPosition(){
-//		return this.position;
-//	}
-//	
-//	private double[] getVelocity(){
-//		return this.velocity;
-//	}
-//	
-//	private double[] getPBest(){
-//		return this.pBest;
-//	}
-//	
-//	private double[] setPosition(double[] newPosition){
-//		this.position = newPosition;
-//	}
-//	
-//	private double[] setVelocity(double[] newVelocity){
-//		this.velocity = newVelocity;
-//	}
-//	
-//	private double[] setPBest(double[] newPBest){
-//		this.velocity = newPBest;
-//	}
-//	
-//	private double[] setPBestCost(double[] newPBestCost){
-//		this.velocity = newPBestCost;
-//	}
+
 }
