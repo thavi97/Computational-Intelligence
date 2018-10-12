@@ -11,7 +11,7 @@ public class ParticleSwarmOptimisation {
 	public ParticleSwarmOptimisation() {
 		this.antennaArray = new AntennaArray(antennaeNum, steeringAngle);
 		//System.out.println(generateAntennaePositions());
-		System.out.println(randomSearchPeakSSL(10000));
+		System.out.println(randomSearchPeakSLL(10000));
 		
 	}
 
@@ -28,21 +28,20 @@ public class ParticleSwarmOptimisation {
 					design[i] = randomNumber;
 				}
 			}
-		design[antennaeNum-1] = aperture;
+		design[design.length-1] = aperture;
 		}
-		double peakSLL = antennaArray.evaluate(design);
 		return design;
 	}
 	
-	private double randomSearchPeakSSL(long setTime) {
+	private double randomSearchPeakSLL(long setTime) {
 		long timer = System.currentTimeMillis() + setTime;
 		double[] antenna = generateAntennaePositions();
 		double[] newAntenna = null;
-		double peakSLL = antennaArray.evaluate(antenna);
+		double peakSLL = Math.abs(antennaArray.evaluate(antenna));
 		while(System.currentTimeMillis() < timer){
 			newAntenna = generateAntennaePositions();
-			double newPeakSLL = antennaArray.evaluate(newAntenna);
-			if(Math.abs(newPeakSLL) < Math.abs(peakSLL)) {
+			double newPeakSLL = Math.abs(antennaArray.evaluate(newAntenna));
+			if(newPeakSLL < peakSLL) {
 				peakSLL = newPeakSLL;
 			}
 		}
