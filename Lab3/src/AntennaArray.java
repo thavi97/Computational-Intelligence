@@ -14,7 +14,6 @@ public class AntennaArray {
         n_antennae = n_ant;
         steering_angle = steering_ang;
     }
-
   /**
    * Rectangular bounds on the search space.
    * @return Vector b such that b[i][0] is the minimum permissible value of the
