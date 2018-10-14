@@ -1,6 +1,8 @@
 import java.util.Arrays;
 import java.util.Random;
-
+/**
+ * @author Thavi Tennakoon
+ */
 public class Particle {
 	private AntennaArray antennaArray;
 	private double[] position;
@@ -8,10 +10,20 @@ public class Particle {
 	public double[] pBest;
 	public double pBestValue;
 	private int antennaeNum;
-	private static double theta = 1/(2*Math.log(2));
-	private static double phi1 = 1/2 + Math.log(2);
-	private static double phi2 = 1/2 + Math.log(2);
+	private static double theta = 1/(2*Math.log(2)); //Inertia Constant
+	private static double phi1 = 1/2 + Math.log(2); //Cognitive Constant
+	private static double phi2 = 1/2 + Math.log(2); //Social Constant
 	
+	/**
+     * Construct a single Particle to be used in the swarm.
+     * @param antennaeNum Number of antennae in our array.
+     * @param steeringAngle Desired direction of the main beam in degrees.
+     * @param antennaArray An antenna array object.
+     * double[] position is the initial position of the particle and is set to a randomly generated position vector.
+     * double[] pBest is the personal best position and is initially set to to current position of the particle.
+     * double pBestValue is set to the evaluated cost of the personal best position.
+     * double[] velocity is initially set to ((position - random position vector)/2).
+     */
 	public Particle(int antennaeNum, double steeringAngle, AntennaArray antennaArray){
 		this.antennaArray = antennaArray;
 		this.antennaeNum = antennaeNum;
@@ -21,11 +33,11 @@ public class Particle {
 		velocity = halfVector(getVectorDifference(generateRandomPosition(antennaeNum), position));
 	}
 	
-	public static void main(String[] args){
-		
-	}
-	
-	
+	/**
+     * Generates a random position vector for the particle.
+     * @param antennaeNum Number of antennae in our array.
+     * @return The newly generated position.
+     */
 	public static double[] generateRandomPosition(int antennaeNum){
 		AntennaArray antennaArray = new AntennaArray(antennaeNum, 90);
 		double[] newPosition = new double[antennaeNum];
@@ -43,8 +55,12 @@ public class Particle {
 		return newPosition;
 	}
 	
-	//Move the particle to the next position.
-	//Current position + next velocity
+	/**
+     * Move the particle to the next position.
+     * Current position + Next Velocity.
+     * @param gBestPos The Global Best Position out of all the particles in the array.
+     * @return The newly calculated position.
+     */
 	public double[] moveNext(double[] gBestPos){
 		double[] newPosition = new double[position.length];
 		for(int i = 0; i<antennaeNum; i++){
@@ -65,6 +81,11 @@ public class Particle {
 
 	}
 	
+	/**
+     * Calculate the next velocity of a particle.
+     * @param gBestPos The Global Best Position out of all the particles in the array.
+     * @return The newly calculated velocity.
+     */
 	private double[] getNextVelocity(double[] gBestPos){
 		double[] nextVelocity = new double[antennaeNum];
 		double[] inertia = new double[antennaeNum];
@@ -85,7 +106,12 @@ public class Particle {
 		
 	}
 	
-	//For r1 and r2
+	/**
+     * Generate a random valid vector.
+     * Used to give values to r1 and r2.
+     * @param antennaeNum Number of antennae in our array.
+     * @return The newly generated random vector.
+     */
 	private double[] generateRandomVector(int antennaeNum){
 		double[] randomVector = new double[antennaeNum];
 		for(int i=0; i<antennaeNum; i++){
@@ -96,16 +122,13 @@ public class Particle {
 		return randomVector;
 	}
 	
+	/**
+     * Calculate the difference between two vectors.
+     * @param vector1 One vector.
+     * @param vector2 Another vector.
+     * @return The difference between the two vectors.
+     */
 	private double[] getVectorDifference(double[] vector1, double[] vector2){
-		// checking for vectors of different sizes
-		if(vector1.length != vector2.length){
-			System.out.println("####ERROR##########");
-			double[] invalidDifferenceVector = new double[vector1.length];
-			for(int i = 0; i < vector1.length; i++){
-				invalidDifferenceVector[i] = Double.MAX_VALUE;
-			}
-			return invalidDifferenceVector;
-		}
 		double[] differenceVector = new double[vector1.length];
 		for(int i = 0; i < vector1.length; i++){
 				differenceVector[i] = vector1[i] - vector2[i];
@@ -113,12 +136,17 @@ public class Particle {
 		return differenceVector;
 	}
 	
+	/**
+     * Divide a vector by 2.
+     * @param vector A vector.
+     * @return The vector divided by 2.
+     */
 	private double[] halfVector(double[] vector){
-		double[] newVector = new double[vector.length];
-		for(int i = 0;i< newVector.length;i++){
-			newVector[i] = vector[i] / 2;
+		double[] halfVector = new double[vector.length];
+		for(int i = 0;i< halfVector.length;i++){
+			halfVector[i] = vector[i] / 2;
 		}
-		return newVector;
+		return halfVector;
 	}
 	
 
