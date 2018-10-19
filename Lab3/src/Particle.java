@@ -70,7 +70,7 @@ public class Particle {
 		if(antennaArray.is_valid(newPosition)){			
 			position = newPosition;
 			double positionValue = antennaArray.evaluate(position);
-			if(Math.abs(positionValue) < Math.abs(pBestValue)){
+			if(positionValue < pBestValue){
 				pBest = position;
 				pBestValue = positionValue;
 			}

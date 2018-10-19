@@ -26,9 +26,9 @@ public class ParticleSwarmOptimisation {
 		double randomSearchPeakSLL = antennaArray.evaluate(randomSearchBest);
 		
 		
-		System.out.println("Swarm Peak SLL: " + Math.abs(swarmPeakSLL) + " with vector " + Arrays.toString(swarmBest));
+		System.out.println("Swarm Peak SLL: " + swarmPeakSLL + " with vector " + Arrays.toString(swarmBest));
 		
-		System.out.println("Random Search Peak SLL: " + Math.abs(randomSearchPeakSLL) + " with vector " + Arrays.toString(randomSearchBest));
+		System.out.println("Random Search Peak SLL: " + randomSearchPeakSLL + " with vector " + Arrays.toString(randomSearchBest));
 
 	}
 
@@ -68,7 +68,7 @@ public class ParticleSwarmOptimisation {
 			for(Particle particle : particles) {
 				double[] newPosition = particle.moveNext(gBestPos);
 				double newPosValue = antennaArray.evaluate(newPosition);
-				if(Math.abs(newPosValue) < Math.abs(gBestValue)){
+				if(newPosValue < gBestValue){
 					gBestPos = newPosition;
 					gBestValue = newPosValue;
 				}
@@ -117,7 +117,7 @@ public class ParticleSwarmOptimisation {
 		while(System.currentTimeMillis() < timer){
 			double[] newAntenna = generateAntennaePositions(antennaeNum, antennaArray);
 			double newSLL = antennaArray.evaluate(newAntenna);
-			if(Math.abs(newSLL) < Math.abs(peakSLL)) {
+			if(newSLL < peakSLL) {
 				antenna = newAntenna;
 				peakSLL = newSLL;
 			}
