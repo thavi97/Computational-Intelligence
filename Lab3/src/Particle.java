@@ -118,7 +118,7 @@ public class Particle {
 			Random r = new Random();
 			randomVector[i] = r.nextDouble();
 		}
-
+		Arrays.sort(randomVector);
 		return randomVector;
 	}
 	
@@ -130,7 +130,7 @@ public class Particle {
      */
 	private double[] getVectorDifference(double[] vector1, double[] vector2){
 		double[] differenceVector = new double[vector1.length];
-		for(int i = 0; i < vector1.length; i++){
+		for(int i=0; i<vector1.length; i++){
 				differenceVector[i] = vector1[i] - vector2[i];
 		}
 		return differenceVector;
@@ -143,7 +143,7 @@ public class Particle {
      */
 	private double[] halfVector(double[] vector){
 		double[] halfVector = new double[vector.length];
-		for(int i = 0;i< halfVector.length;i++){
+		for(int i=0; i<halfVector.length; i++){
 			halfVector[i] = vector[i] / 2;
 		}
 		return halfVector;

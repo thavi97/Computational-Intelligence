@@ -33,7 +33,7 @@ public class ParticleSwarmOptimisation {
 	}
 
 	public static void main(String[] args) {	
-		new ParticleSwarmOptimisation(3, 90, 60000);
+		new ParticleSwarmOptimisation(3, 90, 10000);
 	}
 	
 	/**
