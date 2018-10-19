@@ -66,7 +66,6 @@ public class Particle {
 		for(int i = 0; i<antennaeNum; i++){
 			newPosition[i] = position[i] + velocity[i];
 		}
-		Arrays.sort(newPosition);
 		if(antennaArray.is_valid(newPosition)){			
 			position = newPosition;
 			double positionValue = antennaArray.evaluate(position);
@@ -76,7 +75,6 @@ public class Particle {
 			}
 		}
 		velocity = getNextVelocity(gBestPos);
-		
 		return position;
 
 	}
