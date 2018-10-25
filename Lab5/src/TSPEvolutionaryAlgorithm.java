@@ -29,49 +29,6 @@ public class TSPEvolutionaryAlgorithm {
 		new TSPEvolutionaryAlgorithm();
 	}
 	
-
-	// Takes in a tour as a parameter and then swaps two cities around.
-	// Eg A neighbour can be [1,3,2,4].
-	// One 2-opt swapped version would be [3,1,2,4].
-	private ArrayList<Integer> generateTwoOptTourCSV(ArrayList<Integer> route){
-		Random generator = new Random(); 
-		int i = generator.nextInt(route.size());
-		int u = generator.nextInt(route.size());
-		
-		while(i == u){
-			u = generator.nextInt(route.size());
-		}
-		
-		Collections.swap(route, i, u);
-		return route;
-	}
-	
-	
-	private ArrayList<Integer> generateRandomRouteCSV() {
-		ArrayList<Integer> cities = new ArrayList<Integer>();
-		for(int i=0; i<cityLocations.length; i++){
-			cities.add(i);
-		}
-		
-		Collections.shuffle(cities);
-		return cities;
-	}
-	
-	private Double getCostOfRouteCSV(ArrayList<Integer> route) {
-		double totalCost = 0.0;
-		int startCity = 0;
-		int endCity = 0;
-		for(int i=0; i<route.size()-1; i++){
-			startCity = route.get(i);
-			endCity = route.get(i+1);
-			totalCost += cityLocations[startCity][endCity];	
-		}
-		int firstCity = route.get(0);
-		int nextCity = route.get(route.size()-1);
-		totalCost += cityLocations[nextCity][firstCity];
-		return totalCost;
-	}
-	
 	private ArrayList<ArrayList<Integer>> initialisePopulation(int populationSize){
 		population = new ArrayList<ArrayList<Integer>>();
 		for(int i=0; i<populationSize; i++){
@@ -161,7 +118,62 @@ public class TSPEvolutionaryAlgorithm {
 		return offspring;
 	}
 	
+	private ArrayList<ArrayList<Integer>> newGeneration(){
+		ArrayList<ArrayList<Integer>> newPopulation = new ArrayList<ArrayList<Integer>>();
+		for(int i=0; i<population.size(); i++) {
+			newPopulation.set(i, order1(parentSelection(), parentSelection()));
+		}
+		population = newPopulation;
+		
+		return population;
+	}
+	
+	//TODO Ask about using 2-Swap and Order1 together
+	
 	/*-------------------------------------------------------------------*/
+
+	// Takes in a tour as a parameter and then swaps two cities around.
+	// Eg A neighbour can be [1,3,2,4].
+	// One 2-opt swapped version would be [3,1,2,4].
+	private ArrayList<Integer> generateTwoOptTourCSV(ArrayList<Integer> route){
+		Random generator = new Random(); 
+		int i = generator.nextInt(route.size());
+		int u = generator.nextInt(route.size());
+
+		while(i == u){
+			u = generator.nextInt(route.size());
+		}
+
+		Collections.swap(route, i, u);
+		return route;
+	}
+
+
+	private ArrayList<Integer> generateRandomRouteCSV() {
+		ArrayList<Integer> cities = new ArrayList<Integer>();
+		for(int i=0; i<cityLocations.length; i++){
+			cities.add(i);
+		}
+
+		Collections.shuffle(cities);
+		return cities;
+	}
+
+	private Double getCostOfRouteCSV(ArrayList<Integer> route) {
+		double totalCost = 0.0;
+		int startCity = 0;
+		int endCity = 0;
+		for(int i=0; i<route.size()-1; i++){
+			startCity = route.get(i);
+			endCity = route.get(i+1);
+			totalCost += cityLocations[startCity][endCity];	
+		}
+		int firstCity = route.get(0);
+		int nextCity = route.get(route.size()-1);
+		totalCost += cityLocations[nextCity][firstCity];
+		return totalCost;
+	}
+
 	private void loadFile(int arraySize) throws FileNotFoundException{
 		Scanner ulysses = new Scanner(new File("src\\ulysses16.csv"));
 		ulysses.useDelimiter("\n");
