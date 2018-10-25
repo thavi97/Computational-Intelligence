@@ -1,7 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
 import java.util.Scanner;
@@ -22,7 +21,7 @@ public class TSPEvolutionaryAlgorithm {
 		
 		initialisePopulation(20);
 
-		System.out.println(order1(parentSelection(), parentSelection()).toString());
+		System.out.println("Offspring = "  + order1(parentSelection(), parentSelection()).toString());
 
 	}
 
@@ -111,60 +110,54 @@ public class TSPEvolutionaryAlgorithm {
 		System.out.println("Parent 2 = "+parent2.toString());
 		Random random = new Random();
 		
-		ArrayList<Integer> indexes = new ArrayList<Integer>();
+		ArrayList<Integer> parent1Indexes = new ArrayList<Integer>();
+		ArrayList<Integer> parent2Indexes = new ArrayList<Integer>();
 		
 		int largestIndex = 0;
 		
-		while(indexes.size() < parent1.size()/2){
+		while(parent1Indexes.size() < parent1.size()/2){
 			int randomIndex = random.nextInt(parent1.size());
 			if(randomIndex > largestIndex) {
 				largestIndex = randomIndex;
 			}
-			if(!indexes.contains(randomIndex)){
-				indexes.add(randomIndex);
+			if(!parent1Indexes.contains(randomIndex)){
+				parent1Indexes.add(randomIndex);
 			}
 		}
-		for(Integer index : indexes){
+		System.out.println("Parent 1 Indexes = "+parent1Indexes.toString());
+		for(Integer index : parent1Indexes){
 			offspring.set(index, parent1.get(index));
 			int parent2Index = parent2.indexOf(parent1.get(index));
-			if(parent2Index >= 0){
-				parent2.set(parent2Index, -1);
-			}
+			parent2.set(parent2Index, -1);
 		}
 		
-		int nextIndex = 0;
+		int nextIndex = offspring.indexOf(-1);
 		if(!(largestIndex+1 > offspring.size()-1)) {
 			nextIndex = largestIndex+1;
 		}
-		int nextIndexValue = offspring.get(nextIndex);
+		int initialNextIndex = nextIndex;
 		System.out.println("Parent 2 After = "+parent2.toString());
 		
-		for(int i=0; i<parent2.size(); i++){
-			int getValue = parent2.get(i);
-			if(parent2.get(i) != -1){
-				offspring.set(nextIndex, getValue);
-			}
-			
-			int u = 0;
-			int test = -2;
-			while(u<offspring.size()){
-				if(!(nextIndex+u > offspring.size()-1)){
-					if(offspring.get(nextIndex+u) == -1){
-						test = offspring.indexOf(offspring.get(nextIndex+u));
-						break;
-					}
-				}else{
-					if(offspring.get(0) == -1){
-						test = offspring.indexOf(offspring.get(0));
-						break;
-					}
-				}
-				u++;
-			}
-			System.out.println(test);
-
-		}
 		
+		for(int i=0; i<parent2.size(); i++) {
+			if(parent2.get(i) != -1) {
+				parent2Indexes.add(i);
+			}
+		}
+		System.out.println("Parent 2 Indexes = "+parent2Indexes.toString());
+		
+		for(Integer parent2Index : parent2Indexes) { 
+			offspring.set(nextIndex, parent2.get(parent2Index));
+			while(offspring.get(nextIndex) != -1) {
+				nextIndex++;
+				if(nextIndex == 16) {
+					nextIndex = 0;
+				}
+				if(nextIndex == initialNextIndex) {
+					break;
+				}		
+			}
+		}	
 		return offspring;
 	}
 	
