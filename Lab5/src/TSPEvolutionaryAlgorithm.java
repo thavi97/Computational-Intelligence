@@ -111,16 +111,26 @@ public class TSPEvolutionaryAlgorithm {
 		for(int i=0; i<parent1.size(); i++){
 			offspring.add(-1);
 		}
+		System.out.println("Parent 1 = "+parent1.toString());
+		System.out.println("Parent 2 = "+parent2.toString());
 		Random random = new Random();
-		int u = 0;
-		while(u<offspring.size()/2){
+		
+		ArrayList<Integer> indexes = new ArrayList<Integer>();
+		while(indexes.size() < parent1.size()/2){
 			int randomIndex = random.nextInt(parent1.size());
-			if(offspring.get(u) == -1){
-				offspring.set(randomIndex, parent1.get(randomIndex));
-				parent2.set(randomIndex, -1);
+			if(!indexes.contains(randomIndex)){
+				indexes.add(randomIndex);
 			}
-			u++;
 		}
+				
+		for(Integer index : indexes){
+			offspring.set(index, parent1.get(index));
+			int parent2Index = parent2.indexOf(parent1.get(index));
+			if(parent2Index >= 0){
+				parent2.set(parent2Index, -1);
+			}
+		}
+		System.out.println("Parent 2 After = "+parent2.toString());
 		return offspring;
 	}
 	
