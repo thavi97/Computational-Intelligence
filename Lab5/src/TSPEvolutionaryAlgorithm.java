@@ -1,11 +1,10 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.Set;
 
 public class TSPEvolutionaryAlgorithm {
 
@@ -18,7 +17,6 @@ public class TSPEvolutionaryAlgorithm {
 		try {
 			loadFile(16);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -32,9 +30,7 @@ public class TSPEvolutionaryAlgorithm {
 		new TSPEvolutionaryAlgorithm();
 	}
 	
-	/*CSV FILE CODE*/
-	
-	
+
 	// Takes in a tour as a parameter and then swaps two cities around.
 	// Eg A neighbour can be [1,3,2,4].
 	// One 2-opt swapped version would be [3,1,2,4].
@@ -116,12 +112,20 @@ public class TSPEvolutionaryAlgorithm {
 		Random random = new Random();
 		
 		ArrayList<Integer> indexes = new ArrayList<Integer>();
+		
+		int largestIndex = 0;
+		
 		while(indexes.size() < parent1.size()/2){
 			int randomIndex = random.nextInt(parent1.size());
+			if(randomIndex > largestIndex) {
+				largestIndex = randomIndex;
+			}
 			if(!indexes.contains(randomIndex)){
 				indexes.add(randomIndex);
 			}
 		}
+		System.out.println("Indexes = "+indexes.toString());
+		System.out.println(largestIndex);
 				
 		for(Integer index : indexes){
 			offspring.set(index, parent1.get(index));
@@ -130,7 +134,15 @@ public class TSPEvolutionaryAlgorithm {
 				parent2.set(parent2Index, -1);
 			}
 		}
+		
+		int nextIndex = 0;
+		if(!(largestIndex+1 > offspring.size()-1)) {
+			nextIndex = largestIndex+1;
+		}
+		int nextIndexValue = offspring.get(nextIndex + 1);
 		System.out.println("Parent 2 After = "+parent2.toString());
+		System.out.println(nextIndex);
+		
 		return offspring;
 	}
 	
@@ -165,14 +177,6 @@ public class TSPEvolutionaryAlgorithm {
 			}
 		}
 		ulysses.close();
-	}
-	
-	static int factorial(int n){
-		int res = 1, i;
-		for(i=2; i<=n; i++){
-			res *= i;
-		}
-		return res;
 	}
 	
 }
