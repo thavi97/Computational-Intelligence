@@ -10,4 +10,4 @@ Population Size: 100
 Number of Offspring: 1
 Initialise: Random
 Termination: 100 Generation
-Fitness Evaluation:legnth of tour, minimise
+Fitness Evaluation:length of tour, minimise

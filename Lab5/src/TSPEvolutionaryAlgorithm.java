@@ -124,9 +124,6 @@ public class TSPEvolutionaryAlgorithm {
 				indexes.add(randomIndex);
 			}
 		}
-		System.out.println("Indexes = "+indexes.toString());
-		System.out.println(largestIndex);
-				
 		for(Integer index : indexes){
 			offspring.set(index, parent1.get(index));
 			int parent2Index = parent2.indexOf(parent1.get(index));
@@ -139,9 +136,34 @@ public class TSPEvolutionaryAlgorithm {
 		if(!(largestIndex+1 > offspring.size()-1)) {
 			nextIndex = largestIndex+1;
 		}
-		int nextIndexValue = offspring.get(nextIndex + 1);
+		int nextIndexValue = offspring.get(nextIndex);
 		System.out.println("Parent 2 After = "+parent2.toString());
-		System.out.println(nextIndex);
+		
+		for(int i=0; i<parent2.size(); i++){
+			int getValue = parent2.get(i);
+			if(parent2.get(i) != -1){
+				offspring.set(nextIndex, getValue);
+			}
+			
+			int u = 0;
+			int test = -2;
+			while(u<offspring.size()){
+				if(!(nextIndex+u > offspring.size()-1)){
+					if(offspring.get(nextIndex+u) == -1){
+						test = offspring.indexOf(offspring.get(nextIndex+u));
+						break;
+					}
+				}else{
+					if(offspring.get(0) == -1){
+						test = offspring.indexOf(offspring.get(0));
+						break;
+					}
+				}
+				u++;
+			}
+			System.out.println(test);
+
+		}
 		
 		return offspring;
 	}
