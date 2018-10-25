@@ -12,8 +12,9 @@ public class TSPEvolutionaryAlgorithm {
 	private Double[][] cityLocations;
 	private Double[] xValue;
 	private Double[] yValue;
+	private ArrayList<ArrayList<Integer>> population;
 
-	public TSPEvolutionaryAlgorithm(int setTime) {
+	public TSPEvolutionaryAlgorithm() {
 		try {
 			loadFile(16);
 		} catch (FileNotFoundException e) {
@@ -21,11 +22,14 @@ public class TSPEvolutionaryAlgorithm {
 			e.printStackTrace();
 		}
 		
+		initialisePopulation(20);
+
+		System.out.println(order1(parentSelection(), parentSelection()).toString());
 
 	}
 
 	public static void main(String[] args) {	
-		new TSPEvolutionaryAlgorithm(10000);
+		new TSPEvolutionaryAlgorithm();
 	}
 	
 	/*CSV FILE CODE*/
@@ -47,31 +51,6 @@ public class TSPEvolutionaryAlgorithm {
 		return route;
 	}
 	
-	// Stores all the possibilities of unique tours into a set to form a neighbourhood.
-	private Set<ArrayList<Integer>> generateNeighbourhoodCSV(ArrayList<Integer> route){	
-		Set<ArrayList<Integer>> neighbourhood = new HashSet<ArrayList<Integer>>();
-		neighbourhood.add(route);
-		while(neighbourhood.size() < (((route.size()*(route.size() - 1))/2) + 1)){
-			neighbourhood.add(generateTwoOptTourCSV(route));
-		}
-		return neighbourhood;
-	}
-	
-	// Finds the shortest tour within a randomly generated neighbourhood.
-	private ArrayList<Integer> bestNeighbourStepCSV(Set<ArrayList<Integer>> neighbourhood){
-		double currentCost=0.0;
-		double leastCost=100000.0;
-		ArrayList<Integer> bestRoute = null;
-		for(ArrayList<Integer> route : neighbourhood){
-			ArrayList<Integer> storeRoute = route;
-			currentCost = getCostOfRouteCSV(route);
-			if(currentCost<leastCost){
-				leastCost = currentCost;
-				bestRoute = storeRoute;
-			}
-		}
-		return bestRoute;
-	}
 	
 	private ArrayList<Integer> generateRandomRouteCSV() {
 		ArrayList<Integer> cities = new ArrayList<Integer>();
@@ -98,7 +77,54 @@ public class TSPEvolutionaryAlgorithm {
 		return totalCost;
 	}
 	
+	private ArrayList<ArrayList<Integer>> initialisePopulation(int populationSize){
+		population = new ArrayList<ArrayList<Integer>>();
+		for(int i=0; i<populationSize; i++){
+			population.add(generateRandomRouteCSV());
+		}
+		return population;
+	}
 	
+	private ArrayList<Integer> parentSelection(){
+		ArrayList<Integer> parent = new ArrayList<Integer>();
+		ArrayList<ArrayList<Integer>> candidates = new ArrayList<ArrayList<Integer>>();
+		Random random = new Random();
+		int sampleSize = (int)(population.size() * 0.2);
+		int randomIndex = random.nextInt(population.size());
+		for(int i=0; i<sampleSize; i++){
+			candidates.add(population.get(randomIndex));
+		}
+		double bestCost = 1000;
+		for(ArrayList<Integer> candidate: candidates){
+			double thisCost = getCostOfRouteCSV(candidate);
+			if(thisCost < bestCost){
+				bestCost = thisCost;
+				parent = candidate;
+			}
+		}
+		
+		return parent;
+	}
+	
+	private ArrayList<Integer> order1(ArrayList<Integer> parent1, ArrayList<Integer> parent2){
+		ArrayList<Integer> offspring = new ArrayList<Integer>();
+		for(int i=0; i<parent1.size(); i++){
+			offspring.add(-1);
+		}
+		Random random = new Random();
+		int u = 0;
+		while(u<offspring.size()/2){
+			int randomIndex = random.nextInt(parent1.size());
+			if(offspring.get(u) == -1){
+				offspring.set(randomIndex, parent1.get(randomIndex));
+				parent2.set(randomIndex, -1);
+			}
+			u++;
+		}
+		return offspring;
+	}
+	
+	/*-------------------------------------------------------------------*/
 	private void loadFile(int arraySize) throws FileNotFoundException{
 		Scanner ulysses = new Scanner(new File("src\\ulysses16.csv"));
 		ulysses.useDelimiter("\n");
