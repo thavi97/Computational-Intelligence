@@ -1,0 +1,13 @@
+Representation: Permutation
+Fitness evaluation: Lowest Route cost
+Recombination: Order 1 Crossover
+Recombination Probability: 100%
+Mutation: 2-opt Swap
+Mutation Probability: 70%
+Parent Selection: Tournament, size 10
+Survivor Selection: Elitism & Steady-State
+Population Size: 100
+Number of Offspring: 1
+Initialise: Random
+Termination: 100 Generation
+Fitness Evaluation:legnth of tour, minimise
