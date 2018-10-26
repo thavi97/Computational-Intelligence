@@ -12,21 +12,21 @@ public class TSPEvolutionaryAlgorithm {
 	private Double[] yValue;
 	private ArrayList<ArrayList<Integer>> population;
 
-	public TSPEvolutionaryAlgorithm() {
+	public TSPEvolutionaryAlgorithm(int generations, double probability) {
 		try {
 			loadFile(16);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+		initialisePopulation(100);
+		ArrayList<Integer> bestOffspring = loopThroughGenerations(generations, probability);
+		System.out.println("After " + generations + " generations, the Cheapest Route is " + bestOffspring + " and it's cost is " + getCostOfRouteCSV(bestOffspring));
+		//newGeneration(order1(parentSelection(),parentSelection()), 0.7);
 		
-		initialisePopulation(20);
-
-		System.out.println("Offspring = "  + order1(parentSelection(), parentSelection()).toString());
-
 	}
 
 	public static void main(String[] args) {	
-		new TSPEvolutionaryAlgorithm();
+		new TSPEvolutionaryAlgorithm(60000, 0.7);
 	}
 	
 	private ArrayList<ArrayList<Integer>> initialisePopulation(int populationSize){
@@ -59,12 +59,11 @@ public class TSPEvolutionaryAlgorithm {
 	}
 	
 	private ArrayList<Integer> order1(ArrayList<Integer> parent1, ArrayList<Integer> parent2){
+		ArrayList<Integer> dummyParent2 = new ArrayList<Integer>(parent2);
 		ArrayList<Integer> offspring = new ArrayList<Integer>();
 		for(int i=0; i<parent1.size(); i++){
 			offspring.add(-1);
 		}
-		System.out.println("Parent 1 = "+parent1.toString());
-		System.out.println("Parent 2 = "+parent2.toString());
 		Random random = new Random();
 		
 		ArrayList<Integer> parent1Indexes = new ArrayList<Integer>();
@@ -81,11 +80,11 @@ public class TSPEvolutionaryAlgorithm {
 				parent1Indexes.add(randomIndex);
 			}
 		}
-		System.out.println("Parent 1 Indexes = "+parent1Indexes.toString());
+
 		for(Integer index : parent1Indexes){
 			offspring.set(index, parent1.get(index));
-			int parent2Index = parent2.indexOf(parent1.get(index));
-			parent2.set(parent2Index, -1);
+			int parent2Index = dummyParent2.indexOf(parent1.get(index));
+			dummyParent2.set(parent2Index, -1);
 		}
 		
 		int nextIndex = offspring.indexOf(-1);
@@ -93,18 +92,15 @@ public class TSPEvolutionaryAlgorithm {
 			nextIndex = largestIndex+1;
 		}
 		int initialNextIndex = nextIndex;
-		System.out.println("Parent 2 After = "+parent2.toString());
 		
-		
-		for(int i=0; i<parent2.size(); i++) {
-			if(parent2.get(i) != -1) {
+		for(int i=0; i<dummyParent2.size(); i++) {
+			if(dummyParent2.get(i) != -1) {
 				parent2Indexes.add(i);
 			}
 		}
-		System.out.println("Parent 2 Indexes = "+parent2Indexes.toString());
 		
 		for(Integer parent2Index : parent2Indexes) { 
-			offspring.set(nextIndex, parent2.get(parent2Index));
+			offspring.set(nextIndex, dummyParent2.get(parent2Index));
 			while(offspring.get(nextIndex) != -1) {
 				nextIndex++;
 				if(nextIndex == 16) {
@@ -118,17 +114,51 @@ public class TSPEvolutionaryAlgorithm {
 		return offspring;
 	}
 	
-	private ArrayList<ArrayList<Integer>> newGeneration(){
-		ArrayList<ArrayList<Integer>> newPopulation = new ArrayList<ArrayList<Integer>>();
-		for(int i=0; i<population.size(); i++) {
-			newPopulation.set(i, order1(parentSelection(), parentSelection()));
+	private ArrayList<ArrayList<Integer>> newGeneration(ArrayList<Integer> offspring, double probability){
+		ArrayList<ArrayList<Integer>> newPopulation = new ArrayList<ArrayList<Integer>>(population);
+
+		double random = Math.random();
+		if(random < probability){
+			generateTwoOptTourCSV(offspring);
 		}
-		population = newPopulation;
+		newPopulation.add(offspring);
 		
+		ArrayList<Integer> mostExpensiveRoute = null;
+		double mostExpensiveRouteValue = 0;
+		for(ArrayList<Integer> route : newPopulation) {
+			double routeValue = getCostOfRouteCSV(route);
+			if(routeValue>mostExpensiveRouteValue){
+				mostExpensiveRoute = route;
+				mostExpensiveRouteValue = routeValue;
+			}
+		}
+		int weak = newPopulation.indexOf(mostExpensiveRoute);
+		newPopulation.remove(weak);
+		
+		population = newPopulation;
 		return population;
 	}
 	
-	//TODO Ask about using 2-Swap and Order1 together
+	private ArrayList<Integer> loopThroughGenerations(int numberOfGenerations, double probability){
+		int i=0;
+		ArrayList<ArrayList<Integer>> finalPopulation = new ArrayList<ArrayList<Integer>>();
+		
+		while(i < numberOfGenerations){
+			finalPopulation = newGeneration(order1(parentSelection(),parentSelection()), probability);
+			i++;
+		}
+		ArrayList<Integer> cheapestRoute = new ArrayList<Integer>();
+		double cheapestRouteValue = 10000;
+		for(ArrayList<Integer> route : finalPopulation) {
+			double routeValue = getCostOfRouteCSV(route);
+			if(routeValue<cheapestRouteValue){
+				cheapestRoute = route;
+			}
+		}
+		getCostOfRouteCSV(cheapestRoute);
+		return cheapestRoute;
+	}
+	
 	
 	/*-------------------------------------------------------------------*/
 
