@@ -177,7 +177,6 @@ public class RouteSearch {
 				String[] newLine1 = new String(newLine).split(",");
 				xValue[num] =  Double.parseDouble(newLine1[1]);
 				yValue[num] =  Double.parseDouble(newLine1[2]);
-				//System.out.print(xValue[i] + " " + yValue[i] + "| ");
 				num++;
 			}
 			
@@ -187,7 +186,6 @@ public class RouteSearch {
 			for(int city2=0; city2<cityLocations.length; city2++) {
 				double minusX = Math.pow((xValue[city2]-xValue[city1]), 2);
 				double minusY = Math.pow((yValue[city2]-yValue[city1]), 2);
-				//System.out.print(Math.sqrt(minusX + minusY) + "|");
 				cityLocations[city1][city2] = Math.sqrt(minusX + minusY);
 			}
 		}

@@ -12,21 +12,22 @@ public class TSPEvolutionaryAlgorithm {
 	private Double[] yValue;
 	private ArrayList<ArrayList<Integer>> population;
 
-	public TSPEvolutionaryAlgorithm(int generations, double probability) {
+	public TSPEvolutionaryAlgorithm(int generations, double probability, int population) {
+		
 		try {
 			loadFile(16);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		initialisePopulation(100);
+		
+		initialisePopulation(population);
 		ArrayList<Integer> bestOffspring = loopThroughGenerations(generations, probability);
-		System.out.println("After " + generations + " generations, the Cheapest Route is " + bestOffspring + " and it's cost is " + getCostOfRouteCSV(bestOffspring));
-		//newGeneration(order1(parentSelection(),parentSelection()), 0.7);
+		System.out.println("After " + generations + " generations, the Cheapest Route is " + bestOffspring + " and it costs " + getCostOfRouteCSV(bestOffspring));
 		
 	}
 
 	public static void main(String[] args) {	
-		new TSPEvolutionaryAlgorithm(60000, 0.7);
+		new TSPEvolutionaryAlgorithm(60000, 0.7, 100);
 	}
 	
 	private ArrayList<ArrayList<Integer>> initialisePopulation(int populationSize){
@@ -219,7 +220,6 @@ public class TSPEvolutionaryAlgorithm {
 				String[] newLine1 = new String(newLine).split(",");
 				xValue[num] =  Double.parseDouble(newLine1[1]);
 				yValue[num] =  Double.parseDouble(newLine1[2]);
-				//System.out.print(xValue[i] + " " + yValue[i] + "| ");
 				num++;
 			}
 			
@@ -229,7 +229,6 @@ public class TSPEvolutionaryAlgorithm {
 			for(int city2=0; city2<cityLocations.length; city2++) {
 				double minusX = Math.pow((xValue[city2]-xValue[city1]), 2);
 				double minusY = Math.pow((yValue[city2]-yValue[city1]), 2);
-				//System.out.print(Math.sqrt(minusX + minusY) + "|");
 				cityLocations[city1][city2] = Math.sqrt(minusX + minusY);
 			}
 		}
