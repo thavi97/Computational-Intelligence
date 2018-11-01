@@ -13,6 +13,8 @@ public class AIS {
 	private ArrayList<ArrayList<Integer>> population;
 	private ArrayList<Double> populationCost;
 	private ArrayList<Double> normalisedFitness;
+	private ArrayList<ArrayList<Integer>> clonePool;
+	private double bestCost;
 
 	public AIS(int populationNum) {
 		
@@ -23,19 +25,20 @@ public class AIS {
 		}
 		
 		initialisePopulation(populationNum);
-		System.out.println(normalisedFitness);
+		normalisedFitness();
+		clone(populationNum, 3);
 		
 	}
 
 	public static void main(String[] args) {	
-		new AIS(100);
+		new AIS(5);
 	}
 	
 	private ArrayList<ArrayList<Integer>> initialisePopulation(int populationSize){
 		population = new ArrayList<ArrayList<Integer>>();
 		populationCost = new ArrayList<Double>();
 		normalisedFitness = new ArrayList<Double>();
-		double bestCost = 10000;
+		bestCost = 10000;
 		for(int i=0; i<populationSize; i++){
 			ArrayList<Integer> newRoute = generateRandomRouteCSV();
 			double thisCost = getCostOfRouteCSV(newRoute);
@@ -45,10 +48,44 @@ public class AIS {
 				bestCost = thisCost;
 			}
 		}
-		for(ArrayList<Integer> singlePopulation : population){
-			normalisedFitness.add(populationCost.get(singlePopulation)/bestCost);
-		}
+
 		return population;
+	}
+	
+	private ArrayList<Double> normalisedFitness(){
+		for(double cost : populationCost){
+			normalisedFitness.add(cost/bestCost);
+		}
+		
+		return normalisedFitness;
+	}
+	
+	private ArrayList<ArrayList<Integer>> clone(int populationNum, int cloneSizeFactor){
+		clonePool = new ArrayList<ArrayList<Integer>>();
+		for(int i=0; i<populationNum; i++){
+			for(int u=0; u<populationNum*cloneSizeFactor; u++){
+				clonePool.add(hyperMutation(1, population.get(u), u));
+			}	
+		}		
+		return clonePool;
+	}
+	
+	private ArrayList<Integer> hyperMutation(int rho, ArrayList<Integer> clonedRoute, int index){
+		double mutationRate = Math.exp((-1*rho)*normalisedFitness.get(index));
+		double lengthOfBlock = clonedRoute.size()* mutationRate;
+		ArrayList<Integer> newClone = new ArrayList<Integer>();
+		ArrayList<Integer> cloneBlock = new ArrayList<Integer>();
+		ArrayList<Integer> cloneNonBlock = new ArrayList<Integer>();
+		Random random = new Random();
+		int startIndex = random.nextInt(clonedRoute.size());
+		for(int i=0; i<clonedRoute.size()-1; i++){
+			newClone.add(-1);
+		}
+		for(int i=startIndex; i<lengthOfBlock; i++){
+			cloneBlock.add(clonedRoute.get(i));
+		}
+		
+		return cloneBlock;
 	}
 	
 	/*-------------------------------------------------------------------*/
