@@ -64,28 +64,47 @@ public class AIS {
 		clonePool = new ArrayList<ArrayList<Integer>>();
 		for(int i=0; i<populationNum; i++){
 			for(int u=0; u<populationNum*cloneSizeFactor; u++){
-				clonePool.add(hyperMutation(1, population.get(u), u));
+				ArrayList<Integer> hyperMutation = hyperMutation(1, population.get(i), i);
+				clonePool.add(hyperMutation);
+				System.out.println(hyperMutation);
 			}	
 		}		
 		return clonePool;
 	}
 	
 	private ArrayList<Integer> hyperMutation(int rho, ArrayList<Integer> clonedRoute, int index){
+		ArrayList<Integer> clonedRouteDummy = new ArrayList<Integer>(clonedRoute);
 		double mutationRate = Math.exp((-1*rho)*normalisedFitness.get(index));
-		double lengthOfBlock = clonedRoute.size()* mutationRate;
+		int blockLength = (int)(clonedRouteDummy.size()* mutationRate);
+		int nonBlockLength = clonedRouteDummy.size() - blockLength;
 		ArrayList<Integer> newClone = new ArrayList<Integer>();
-		ArrayList<Integer> cloneBlock = new ArrayList<Integer>();
-		ArrayList<Integer> cloneNonBlock = new ArrayList<Integer>();
+		ArrayList<Integer> blockClone = new ArrayList<Integer>();
+		
 		Random random = new Random();
-		int startIndex = random.nextInt(clonedRoute.size());
-		for(int i=0; i<clonedRoute.size()-1; i++){
+		int startIndex = random.nextInt(clonedRouteDummy.size());
+		for(int i=0; i<clonedRouteDummy.size(); i++){
 			newClone.add(-1);
 		}
-		for(int i=startIndex; i<lengthOfBlock; i++){
-			cloneBlock.add(clonedRoute.get(i));
+		int u = startIndex;
+		for(int i=startIndex; i<startIndex+blockLength; i++){
+			if(u == clonedRouteDummy.size()) {
+				u = 0;
+			}
+			blockClone.add(clonedRouteDummy.get(u));
+			clonedRouteDummy.set(u, -1);
+			u++;
 		}
 		
-		return cloneBlock;
+		ArrayList<Integer> nonBlockClone = new ArrayList<Integer>(clonedRouteDummy);
+		nonBlockClone.removeAll(Collections.singleton(-1));
+		
+		System.out.println("start index = " + startIndex);
+		System.out.println("block length = " + blockLength);
+		System.out.println("cloned route = " + clonedRoute);
+		System.out.println("block clone = " + blockClone);
+		System.out.println("non block clone = " + nonBlockClone);
+		System.out.println("--------------------------------------");
+		return clonedRouteDummy;
 	}
 	
 	/*-------------------------------------------------------------------*/
