@@ -16,7 +16,7 @@ public class AIS {
 	private ArrayList<ArrayList<Integer>> clonePool;
 	private double bestCost;
 
-	public AIS(int populationNum, int evaluations) {
+	public AIS(int populationNum, int evaluations, double cloneSizeFactor, int d) {
 		
 		try {
 			loadFile(16);
@@ -25,11 +25,11 @@ public class AIS {
 		}
 		
 		initialisePopulation(populationNum);
-
-		normalisedFitness();
+		normaliseFitness();
+		
 		for(int i=0; i<evaluations; i++){
-			selection(clone(populationNum, 3), populationNum);
-			metadynamics(2, populationNum);
+			selection(clone(populationNum, cloneSizeFactor), populationNum);
+			metadynamics(d, populationNum);
 		}
 		
 		ArrayList<Integer> bestRoute = bestRoute();
@@ -37,9 +37,16 @@ public class AIS {
 	}
 
 	public static void main(String[] args) {	
-		new AIS(5, 5000);
+		new AIS(100, 5, 0.05, 10);
 	}
 	
+	/**
+	 * Fills the population ArrayList with a bunch of random routes and also
+	 * stores the routes' costs in a separate ArrayList.
+	 * We also fill in the bestCost variable so it can be used for normalisation.
+	 * @param populationSize
+	 * @return A population ArrayList
+	 */
 	private ArrayList<ArrayList<Integer>> initialisePopulation(int populationSize){
 		population = new ArrayList<ArrayList<Integer>>();
 		populationCost = new ArrayList<Double>();
@@ -57,16 +64,25 @@ public class AIS {
 
 		return population;
 	}
-	
-	private ArrayList<Double> normalisedFitness(){
+
+	/**
+	 * Gets all the costs of each route and normalises them.
+	 * @return An ArrayList of normalised fitnesses.
+	 */
+	private ArrayList<Double> normaliseFitness(){
 		for(double cost : populationCost){
 			normalisedFitness.add(cost/bestCost);
-		}
-		
+		}	
 		return normalisedFitness;
 	}
 	
-	private ArrayList<ArrayList<Integer>> clone(int populationNum, int cloneSizeFactor){
+	/**
+	 * Create a new ArrayList that stores all the mutated clones in it.
+	 * @param populationNum
+	 * @param cloneSizeFactor
+	 * @return The clonePool ArrayList.
+	 */
+	private ArrayList<ArrayList<Integer>> clone(int populationNum, double cloneSizeFactor){
 		clonePool = new ArrayList<ArrayList<Integer>>();
 		for(int i=0; i<populationNum; i++){
 			for(int u=0; u<populationNum*cloneSizeFactor; u++){
@@ -77,52 +93,62 @@ public class AIS {
 		return clonePool;
 	}
 	
-	private ArrayList<Integer> hyperMutation(int rho, ArrayList<Integer> clonedRoute, int index){
-		ArrayList<Integer> newClone = new ArrayList<Integer>(clonedRoute);
+	/**
+	 * Performs the Hyper mutation.
+	 * First it calculates the mutation rate using the given formula.
+	 * Then it calculates the block length of the selected values in the route.
+	 * For every route the block starts at a random index.
+	 * Finally, select all values in the selected block and reverse the values.
+	 * Now you have a mutated route with reversed block values.
+	 * @param rho
+	 * @param route
+	 * @param index
+	 * @return The new mutated route.
+	 */
+	private ArrayList<Integer> hyperMutation(int rho, ArrayList<Integer> route, int index){
+		ArrayList<Integer> mutatedRoute = new ArrayList<Integer>(route);
 		double mutationRate = Math.exp((-1*rho)*normalisedFitness.get(index));
-		int blockLength = (int)(newClone.size()* mutationRate);
-		ArrayList<Integer> blockClone = new ArrayList<Integer>();
+		int blockLength = (int)(mutatedRoute.size()* mutationRate);
+		ArrayList<Integer> blockRoute = new ArrayList<Integer>(); //We will be storing the selected cities in the block in here
 		
 		Random random = new Random();
-		int startIndex = random.nextInt(newClone.size());
+		int startIndex = random.nextInt(mutatedRoute.size());
 
 		int u1 = startIndex;
-		for(int i=startIndex; i<startIndex+blockLength; i++){
-			if(u1 == newClone.size()) {
+		for(int i=0; i<blockLength; i++){
+			if(u1 == mutatedRoute.size()) {
 				u1 = 0;
 			}
-			blockClone.add(newClone.get(u1));
-			newClone.set(u1, -1);
+			blockRoute.add(mutatedRoute.get(u1));
+			mutatedRoute.set(u1, -1);
 			u1++;
 		}
 		
-		Collections.reverse(blockClone);
+		Collections.reverse(blockRoute);
 		
 		int u2 = startIndex;
 		int u3 = 0;
 		for(int i=0; i<blockLength; i++){
-			if(u2==newClone.size()){
+			if(u2==mutatedRoute.size()){
 				u2=0;
 			}
-			newClone.set(u2, blockClone.get(u3));
+			mutatedRoute.set(u2, blockRoute.get(u3));
 			u2++;
 			u3++;
 		}
 		
-//		System.out.println("start index = " + startIndex);
-//		System.out.println("block length = " + blockLength);
-//		System.out.println("cloned route = " + clonedRoute);
-//		System.out.println("block clone = " + blockClone);
-//		System.out.println("new clone = " + newClone);
-//		System.out.println("--------------------------------------");
-		return newClone;
+		return mutatedRoute;
 	}
 	
-	
+	/**
+	 * First, add the clonePool into the current population.
+	 * Then keep the best mu routes in the population.
+	 * @param clonePool
+	 * @param populationSize
+	 * @return The new population ArrayList.
+	 */
 	private ArrayList<ArrayList<Integer>> selection(ArrayList<ArrayList<Integer>> clonePool, int populationSize){
-		
 		population.addAll(clonePool);
-
 		while(population.size() > populationSize){
 			ArrayList<Integer> thisRoute = null;
 			ArrayList<Integer> worstRoute = null;
@@ -137,15 +163,20 @@ public class AIS {
 				}
 			}
 			population.remove(population.indexOf(worstRoute));
-		}
-		
+		}	
 		return population;
 	}
 	
-	private ArrayList<ArrayList<Integer>> metadynamics(int d, int populationSize){
-		
+	
+	/**
+	 * Removes the d worst routes and adds in 2 random ones.
+	 * Afterwards we refill the populationCost ArrayList and normalisedFitness ArrayList so it can be used for the next iteration.
+	 * @param d
+	 * @param populationSize
+	 * @return The population ArrayList.
+	 */
+	private ArrayList<ArrayList<Integer>> metadynamics(int d, int populationSize){	
 		populationCost.removeAll(populationCost);
-		
 		for(int u=0; u<d; u++){
 			ArrayList<Integer> thisRoute = null;
 			ArrayList<Integer> worstRoute = null;
@@ -169,11 +200,15 @@ public class AIS {
 			populationCost.add(getCostOfRouteCSV(population.get(i)));
 		}
 		
-		normalisedFitness();
+		normaliseFitness();
 		
 		return population;
 	}
 	
+	/**
+	 * We will then calculate the best route after all the iterations.
+	 * @return The best route (Cheapest route).
+	 */
 	private ArrayList<Integer> bestRoute(){
 		ArrayList<Integer> bestRoute = null;
 		ArrayList<Integer> thisRoute = null;
