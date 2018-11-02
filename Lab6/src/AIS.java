@@ -120,10 +120,9 @@ public class AIS {
 	
 	
 	private ArrayList<ArrayList<Integer>> selection(ArrayList<ArrayList<Integer>> clonePool, int populationSize){
-		for(int i=0; i<clonePool.size(); i++){
-			population.add(clonePool.get(i));
-		}
 		
+		population.addAll(clonePool);
+
 		while(population.size() > populationSize){
 			ArrayList<Integer> thisRoute = null;
 			ArrayList<Integer> worstRoute = null;
@@ -140,12 +139,13 @@ public class AIS {
 			population.remove(population.indexOf(worstRoute));
 		}
 		
-		normalisedFitness();
-		
 		return population;
 	}
 	
 	private ArrayList<ArrayList<Integer>> metadynamics(int d, int populationSize){
+		
+		populationCost.removeAll(populationCost);
+		
 		for(int u=0; u<d; u++){
 			ArrayList<Integer> thisRoute = null;
 			ArrayList<Integer> worstRoute = null;
@@ -164,6 +164,11 @@ public class AIS {
 		for(int i=0; i<d; i++){
 			population.add(generateRandomRouteCSV());
 		}
+		
+		for(int i=0; i<populationSize; i++){
+			populationCost.add(getCostOfRouteCSV(population.get(i)));
+		}
+		
 		normalisedFitness();
 		
 		return population;
