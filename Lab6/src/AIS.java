@@ -37,7 +37,7 @@ public class AIS {
 	}
 
 	public static void main(String[] args) {	
-		new AIS(100, 5, 0.05, 10);
+		new AIS(5, 5000, 3, 2);
 	}
 	
 	/**
