@@ -18,17 +18,17 @@ public class ParticleSwarmOptimisation {
 		
 		System.out.println("Getting the best Swarm vector... This will take " + setTime/1000 + " seconds.");
 		double[] swarmBest = swarm(antennaeNum, steeringAngle, antennaArray, setTime);
-		System.out.println("Getting the best Random Search vector... This will take " + setTime/1000 + " seconds.");
-		double[] randomSearchBest = randomSearchPeakSLL(antennaeNum, antennaArray, setTime);
+//		System.out.println("Getting the best Random Search vector... This will take " + setTime/1000 + " seconds.");
+//		double[] randomSearchBest = randomSearchPeakSLL(antennaeNum, antennaArray, setTime);
 		System.out.println("--------------------");
-		System.out.println("Evaluating both vectors' costs");
+//		System.out.println("Evaluating both vectors' costs");
 		double swarmPeakSLL = antennaArray.evaluate(swarmBest);
-		double randomSearchPeakSLL = antennaArray.evaluate(randomSearchBest);
+//		double randomSearchPeakSLL = antennaArray.evaluate(randomSearchBest);
 		
 		
 		System.out.println("Swarm Peak SLL: " + swarmPeakSLL + " with vector " + Arrays.toString(swarmBest));
 		
-		System.out.println("Random Search Peak SLL: " + randomSearchPeakSLL + " with vector " + Arrays.toString(randomSearchBest));
+//		System.out.println("Random Search Peak SLL: " + randomSearchPeakSLL + " with vector " + Arrays.toString(randomSearchBest));
 
 	}
 
