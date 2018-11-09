@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.Random;
 import java.util.Scanner;
 
-public class AIS {
+public class TSPArtificialImmuneSystem {
 
 	private Double[][] cityLocations;
 	private Double[] xValue;
@@ -16,10 +16,10 @@ public class AIS {
 	private ArrayList<ArrayList<Integer>> clonePool;
 	private double bestCost;
 
-	public AIS(int populationNum, int evaluations, double cloneSizeFactor, int d) {
+	public TSPArtificialImmuneSystem(int populationNum, int evaluations, double cloneSizeFactor, int d, int routeSize) {
 		
 		try {
-			loadFile(16);
+			loadFile(routeSize);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -27,23 +27,28 @@ public class AIS {
 		initialisePopulation(populationNum);
 		normaliseFitness();
 		
+		/**
+		 * Perform an AIS algorithm for a specific number of evaluations.
+		 */
 		for(int i=0; i<evaluations; i++){
 			selection(clone(populationNum, cloneSizeFactor), populationNum);
 			metadynamics(d, populationNum);
 		}
 		
 		ArrayList<Integer> bestRoute = bestRoute();
-		System.out.println("The best route is " + bestRoute + " and it costs " + getCostOfRouteCSV(bestRoute));
+		System.out.println("The best route is " + bestRoute + " and it costs " + getCostOfRoute(bestRoute));
 	}
 
 	public static void main(String[] args) {	
-		new AIS(5, 5000, 3, 2);
+		new TSPArtificialImmuneSystem(5, 5000, 3, 2, 16);
 	}
 	
 	/**
 	 * Fills the population ArrayList with a bunch of random routes and also
 	 * stores the routes' costs in a separate ArrayList.
+	 * 
 	 * We also fill in the bestCost variable so it can be used for normalisation.
+	 * 
 	 * @param populationSize
 	 * @return A population ArrayList
 	 */
@@ -53,8 +58,8 @@ public class AIS {
 		normalisedFitness = new ArrayList<Double>();
 		bestCost = 10000;
 		for(int i=0; i<populationSize; i++){
-			ArrayList<Integer> newRoute = generateRandomRouteCSV();
-			double thisCost = getCostOfRouteCSV(newRoute);
+			ArrayList<Integer> newRoute = generateRandomRoute();
+			double thisCost = getCostOfRoute(newRoute);
 			populationCost.add(thisCost);
 			population.add(newRoute);
 			if(thisCost<bestCost){
@@ -67,6 +72,9 @@ public class AIS {
 
 	/**
 	 * Gets all the costs of each route and normalises them.
+	 * 
+	 * You normalise the cost be dividing the cost of the route by the cheapest cost.
+	 * 
 	 * @return An ArrayList of normalised fitnesses.
 	 */
 	private ArrayList<Double> normaliseFitness(){
@@ -78,6 +86,7 @@ public class AIS {
 	
 	/**
 	 * Create a new ArrayList that stores all the mutated clones in it.
+	 * 
 	 * @param populationNum
 	 * @param cloneSizeFactor
 	 * @return The clonePool ArrayList.
@@ -95,11 +104,17 @@ public class AIS {
 	
 	/**
 	 * Performs the Hyper mutation.
+	 * 
 	 * First it calculates the mutation rate using the given formula.
+	 * 
 	 * Then it calculates the block length of the selected values in the route.
-	 * For every route the block starts at a random index.
-	 * Finally, select all values in the selected block and reverse the values.
+	 * 
+	 * For every route, the block starts at a random index.
+	 * 
+	 * Finally, select all values in the selected block and reverse the order of them.
+	 * 
 	 * Now you have a mutated route with reversed block values.
+	 * 
 	 * @param rho
 	 * @param route
 	 * @param index
@@ -142,7 +157,9 @@ public class AIS {
 	
 	/**
 	 * First, add the clonePool into the current population.
+	 * 
 	 * Then keep the best mu routes in the population.
+	 * 
 	 * @param clonePool
 	 * @param populationSize
 	 * @return The new population ArrayList.
@@ -156,7 +173,7 @@ public class AIS {
 			double worstCost = 0;
 			for(int i=0; i<population.size(); i++){
 				thisRoute = population.get(i);
-				thisCost = getCostOfRouteCSV(thisRoute);
+				thisCost = getCostOfRoute(thisRoute);
 				if(thisCost>worstCost){
 					worstCost = thisCost;
 					worstRoute = thisRoute;
@@ -170,7 +187,9 @@ public class AIS {
 	
 	/**
 	 * Removes the d worst routes and adds in 2 random ones.
+	 * 
 	 * Afterwards we refill the populationCost ArrayList and normalisedFitness ArrayList so it can be used for the next iteration.
+	 * 
 	 * @param d
 	 * @param populationSize
 	 * @return The population ArrayList.
@@ -184,7 +203,7 @@ public class AIS {
 			double worstCost = 0;
 			for(int i=0; i<population.size(); i++){
 				thisRoute = population.get(i);
-				thisCost = getCostOfRouteCSV(thisRoute);
+				thisCost = getCostOfRoute(thisRoute);
 				if(thisCost>worstCost){
 					worstCost = thisCost;
 					worstRoute = thisRoute;
@@ -193,11 +212,11 @@ public class AIS {
 			population.remove(population.indexOf(worstRoute));
 		}
 		for(int i=0; i<d; i++){
-			population.add(generateRandomRouteCSV());
+			population.add(generateRandomRoute());
 		}
 		
 		for(int i=0; i<populationSize; i++){
-			populationCost.add(getCostOfRouteCSV(population.get(i)));
+			populationCost.add(getCostOfRoute(population.get(i)));
 		}
 		
 		normaliseFitness();
@@ -207,20 +226,20 @@ public class AIS {
 	
 	/**
 	 * We will then calculate the best route after all the iterations.
+	 * 
 	 * @return The best route (Cheapest route).
 	 */
 	private ArrayList<Integer> bestRoute(){
-		ArrayList<Integer> bestRoute = null;
 		ArrayList<Integer> thisRoute = null;
 		double thisCost = 0;
-		double bestCost1 = 10000;
+		ArrayList<Integer> bestRoute = population.get(0);
+		double bestCost1 = getCostOfRoute(bestRoute);	
 		for(int i=0; i<population.size(); i++){
 			thisRoute = population.get(i);
-			thisCost = getCostOfRouteCSV(thisRoute);
+			thisCost = getCostOfRoute(thisRoute);
 			if(thisCost<bestCost1){
 				bestCost1 = thisCost;
 				bestRoute = thisRoute;
-
 			}
 		}
 		return bestRoute;
@@ -228,7 +247,7 @@ public class AIS {
 	
 	/*-------------------------------------------------------------------*/
 
-	private ArrayList<Integer> generateRandomRouteCSV() {
+	private ArrayList<Integer> generateRandomRoute() {
 		ArrayList<Integer> cities = new ArrayList<Integer>();
 		for(int i=0; i<cityLocations.length; i++){
 			cities.add(i);
@@ -238,7 +257,7 @@ public class AIS {
 		return cities;
 	}
 
-	private Double getCostOfRouteCSV(ArrayList<Integer> route) {
+	private Double getCostOfRoute(ArrayList<Integer> route) {
 		double totalCost = 0.0;
 		int startCity = 0;
 		int endCity = 0;
