@@ -12,10 +12,10 @@ public class TSPEvolutionaryAlgorithm {
 	private Double[] yValue;
 	private ArrayList<ArrayList<Integer>> population;
 
-	public TSPEvolutionaryAlgorithm(int generations, double probability, int population) {
+	public TSPEvolutionaryAlgorithm(int generations, double probability, int population, int routeSize) {
 		
 		try {
-			loadFile(16);
+			loadFile(routeSize);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -27,9 +27,14 @@ public class TSPEvolutionaryAlgorithm {
 	}
 
 	public static void main(String[] args) {	
-		new TSPEvolutionaryAlgorithm(60000, 0.7, 100);
+		new TSPEvolutionaryAlgorithm(60000, 0.7, 100, 19);
 	}
 	
+	/**
+	 * Fills in the population ArrayList with random tours
+	 * @param populationSize
+	 * @return The new population filled in.
+	 */
 	private ArrayList<ArrayList<Integer>> initialisePopulation(int populationSize){
 		population = new ArrayList<ArrayList<Integer>>();
 		for(int i=0; i<populationSize; i++){
@@ -38,6 +43,12 @@ public class TSPEvolutionaryAlgorithm {
 		return population;
 	}
 	
+	/**
+	 * Uses tournament selection to find the best parent.
+	 * First we get a sample population that is 20% size of the population.
+	 * Within this sample we will extract the best tour to become a parent.
+	 * @return The best parent tour in the sample.
+	 */
 	private ArrayList<Integer> parentSelection(){
 		ArrayList<Integer> parent = new ArrayList<Integer>();
 		ArrayList<ArrayList<Integer>> candidates = new ArrayList<ArrayList<Integer>>();
@@ -59,6 +70,15 @@ public class TSPEvolutionaryAlgorithm {
 		return parent;
 	}
 	
+	/**
+	 * We will generate an offspring using order1 crossover
+	 * First select a block of cities, from parent 1, whose length is less than (number of cities/2).
+	 * We then place these cities into the offspring in the same index as parent1.
+	 * Then fill in the rest of offspring's cities in the order of parent2.
+	 * @param parent1
+	 * @param parent2
+	 * @return The new offspring tour.
+	 */
 	private ArrayList<Integer> order1(ArrayList<Integer> parent1, ArrayList<Integer> parent2){
 		ArrayList<Integer> dummyParent2 = new ArrayList<Integer>(parent2);
 		ArrayList<Integer> offspring = new ArrayList<Integer>();
@@ -104,7 +124,7 @@ public class TSPEvolutionaryAlgorithm {
 			offspring.set(nextIndex, dummyParent2.get(parent2Index));
 			while(offspring.get(nextIndex) != -1) {
 				nextIndex++;
-				if(nextIndex == 16) {
+				if(nextIndex == parent2.size()-1) {
 					nextIndex = 0;
 				}
 				if(nextIndex == initialNextIndex) {
@@ -115,6 +135,15 @@ public class TSPEvolutionaryAlgorithm {
 		return offspring;
 	}
 	
+	/**
+	 * Create a new generation of tours to be used for future evaluations.
+	 * We will first add the newly created offspring into the population.
+	 * Then there's a chance that the offspring can mutated (Cause a 2-opt swap)
+	 * Now we will remove the most expensive tour from the population.
+	 * @param offspring
+	 * @param probability
+	 * @return The new generation population.
+	 */
 	private ArrayList<ArrayList<Integer>> newGeneration(ArrayList<Integer> offspring, double probability){
 		ArrayList<ArrayList<Integer>> newPopulation = new ArrayList<ArrayList<Integer>>(population);
 
@@ -140,6 +169,13 @@ public class TSPEvolutionaryAlgorithm {
 		return population;
 	}
 	
+	/**
+	 * This is where we can keep looping through generations to form a brand new population.
+	 * At the end of this we will extract the cheapest route after looping.
+	 * @param numberOfGenerations
+	 * @param probability
+	 * @return The cheapest route after a number of generations.
+	 */
 	private ArrayList<Integer> loopThroughGenerations(int numberOfGenerations, double probability){
 		int i=0;
 		ArrayList<ArrayList<Integer>> finalPopulation = new ArrayList<ArrayList<Integer>>();
@@ -163,9 +199,13 @@ public class TSPEvolutionaryAlgorithm {
 	
 	/*-------------------------------------------------------------------*/
 
-	// Takes in a tour as a parameter and then swaps two cities around.
-	// Eg A neighbour can be [1,3,2,4].
-	// One 2-opt swapped version would be [3,1,2,4].
+	/**
+	 * Takes in a tour as a parameter and then swaps two cities around.
+	 * Eg A neighbour can be [1,3,2,4].
+	 * One 2-opt swapped version would be [3,1,2,4].
+	 * @param route
+	 * @return A 2-opt swapped route.
+	 */
 	private ArrayList<Integer> generateTwoOptTourCSV(ArrayList<Integer> route){
 		Random generator = new Random(); 
 		int i = generator.nextInt(route.size());
@@ -206,7 +246,7 @@ public class TSPEvolutionaryAlgorithm {
 	}
 
 	private void loadFile(int arraySize) throws FileNotFoundException{
-		Scanner ulysses = new Scanner(new File("src\\ulysses16.csv"));
+		Scanner ulysses = new Scanner(new File("src\\ulysses17.csv"));
 		ulysses.useDelimiter("\n");
 		
 		cityLocations = new Double[arraySize][arraySize]; 
