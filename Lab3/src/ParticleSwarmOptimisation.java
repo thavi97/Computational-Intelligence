@@ -25,7 +25,7 @@ public class ParticleSwarmOptimisation {
 		double swarmPeakSLL = antennaArray.evaluate(swarmBest);
 //		double randomSearchPeakSLL = antennaArray.evaluate(randomSearchBest);
 		
-		
+		System.out.println(antennaeNum + " antennae with a steering angle of " + steeringAngle);
 		System.out.println("Swarm Peak SLL: " + swarmPeakSLL + " with vector " + Arrays.toString(swarmBest));
 		
 //		System.out.println("Random Search Peak SLL: " + randomSearchPeakSLL + " with vector " + Arrays.toString(randomSearchBest));
