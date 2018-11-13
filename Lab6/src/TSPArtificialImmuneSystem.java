@@ -5,6 +5,9 @@ import java.util.Collections;
 import java.util.Random;
 import java.util.Scanner;
 
+/**
+ * @author Thavi Tennakoon
+ */
 public class TSPArtificialImmuneSystem {
 
 	private Double[][] cityLocations;

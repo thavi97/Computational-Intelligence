@@ -7,6 +7,9 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 
+/**
+ * @author Thavi Tennakoon
+ */
 public class TSPLocalSearch {
 
 	private Double[][] cityLocations;
