@@ -222,6 +222,12 @@ public class TSPArtificialImmuneSystem {
 			populationCost.add(getCostOfRoute(population.get(i)));
 		}
 		
+		for(double cost : populationCost) {
+			if(cost<bestCost){
+				bestCost = cost;
+			}
+		}
+		
 		normaliseFitness();
 		
 		return population;

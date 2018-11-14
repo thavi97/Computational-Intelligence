@@ -1,23 +1,21 @@
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Random;
-import java.util.Scanner;
 
 /**
  * @author Thavi Tennakoon
  */
 public class AISPricingProblem {
 
-	private double[] prices;
+	private double[] priceList;
 	private ArrayList<double[]> population;
-	private ArrayList<Double> populationCost;
+	private ArrayList<Double> populationRevenue;
 	private ArrayList<Double> normalisedFitness;
 	private ArrayList<double[]> clonePool;
-	private double bestCost;
+	private double bestRevenue;
+	PricingProblem f = PricingProblem.courseworkInstance();
 
-	public AISPricingProblem(int populationNum, int evaluations, double cloneSizeFactor, int d, int routeSize) {
+	public AISPricingProblem(int populationNum, int evaluations, double cloneSizeFactor, int d) {
 		
 		initialisePopulation(populationNum);
 		normaliseFitness();
@@ -28,14 +26,16 @@ public class AISPricingProblem {
 		for(int i=0; i<evaluations; i++){
 			selection(clone(populationNum, cloneSizeFactor), populationNum);
 			metadynamics(d, populationNum);
+			System.out.println("Best Revenue so far " + bestRevenue);
 		}
 		
-		ArrayList<Integer> bestRoute = bestRoute();
-		System.out.println("The best route is " + bestRoute + " and it costs " + getCostOfRoute(bestRoute));
+		double[] bestRoute = bestRoute();
+		System.out.println("The best list of goods after " + evaluations + " evaluations is " + Arrays.toString(bestRoute));
+		System.out.println("Its revenue is " + f.evaluate(bestRoute));
 	}
 
 	public static void main(String[] args) {	
-		new AISPricingProblem(5, 5000, 3, 2, 16);
+		new AISPricingProblem(5, 1000, 3, 2);
 	}
 	
 	/**
@@ -48,31 +48,30 @@ public class AISPricingProblem {
 	 * @return A population ArrayList
 	 */
 	private double[] initialisePopulation(int populationSize){
-		PricingProblem f = PricingProblem.courseworkInstance();
-		prices = new double[populationSize];	
 		population = new ArrayList<double[]>();
-		populationCost = new ArrayList<Double>();
+		populationRevenue = new ArrayList<Double>();
 		normalisedFitness = new ArrayList<Double>();
-		bestCost = 0;
+		bestRevenue = 0;
 		Random rng = new Random(0);
 		
 		for(int i=0; i<populationSize; i++){
-			
-			for (int u=0; u<populationSize; u++) {
-	            prices[u] = rng.nextDouble() * 10;
-	        }
-			
-			double thisCost = f.evaluate(prices);
-			populationCost.add(thisCost);
-			population.add(prices);
-			
-			if(thisCost>bestCost){
-				bestCost = thisCost;
+			priceList = new double[20];
+
+			for(int u=0; u<20; u++) {
+				priceList[u] = rng.nextDouble() * 10;
 			}
 			
+			double thisCost = f.evaluate(priceList);
+		
+				populationRevenue.add(thisCost);
+				population.add(priceList);
+			
+				if(thisCost>bestRevenue){
+					bestRevenue = thisCost;
+				}
+			
 		}
-
-		return prices;
+		return priceList;
 	}
 
 	/**
@@ -83,8 +82,8 @@ public class AISPricingProblem {
 	 * @return An ArrayList of normalised fitnesses.
 	 */
 	private ArrayList<Double> normaliseFitness(){
-		for(double cost : populationCost){
-			normalisedFitness.add(cost/bestCost);
+		for(double cost : populationRevenue){
+			normalisedFitness.add(cost/bestRevenue);
 		}	
 		return normalisedFitness;
 	}
@@ -103,7 +102,8 @@ public class AISPricingProblem {
 				double[] hyperMutation = hyperMutation(1, population.get(i), i);
 				clonePool.add(hyperMutation);
 			}	
-		}		
+		}
+
 		return clonePool;
 	}
 	
@@ -121,29 +121,25 @@ public class AISPricingProblem {
 	 * Now you have a mutated route with reversed block values.
 	 * 
 	 * @param rho
-	 * @param price
+	 * @param priceList
 	 * @param index
 	 * @return The new mutated route.
 	 */
-	private double[] hyperMutation(int rho, double[] price, int index){
-		double[] mutatedPrice = price;
+	private double[] hyperMutation(int rho, double[] priceList, int index){
+		double[] mutatedPriceList = priceList.clone();
 		double mutationRate = Math.exp((-1*rho)*normalisedFitness.get(index));
-		int blockLength = (int)(mutatedPrice.length* mutationRate);
-		
+		int blockLength = (int)(mutatedPriceList.length* mutationRate);
 		Random random = new Random();
-		Random rng = new Random(0);
-		int startIndex = random.nextInt(mutatedPrice.length);
-
+		int startIndex = random.nextInt(mutatedPriceList.length);
 		int u1 = startIndex;
 		for(int i=0; i<blockLength; i++){
-			if(u1 == mutatedPrice.length) {
+			if(u1 == mutatedPriceList.length) {
 				u1 = 0;
 			}
-			mutatedPrice[u1] = rng.nextDouble();
+			mutatedPriceList[u1] = random.nextDouble() * 10;
 			u1++;
 		}
-		
-		return mutatedPrice;
+		return mutatedPriceList;
 	}
 	
 	/**
@@ -155,24 +151,24 @@ public class AISPricingProblem {
 	 * @param populationSize
 	 * @return The new population ArrayList.
 	 */
-	private ArrayList<ArrayList<Integer>> selection(ArrayList<ArrayList<Integer>> clonePool, int populationSize){
-		prices.addAll(clonePool);
-		while(prices.size() > populationSize){
-			ArrayList<Integer> thisRoute = null;
-			ArrayList<Integer> worstRoute = null;
+	private ArrayList<double[]> selection(ArrayList<double[]> clonePool, int populationSize){
+		population.addAll(clonePool);
+		while(population.size() > populationSize){
+			double[] thisRoute = null;
+			double[] worstRoute = null;
 			double thisCost = 0;
-			double worstCost = 0;
-			for(int i=0; i<prices.size(); i++){
-				thisRoute = prices.get(i);
-				thisCost = getCostOfRoute(thisRoute);
-				if(thisCost>worstCost){
+			double worstCost = 100000;
+			for(int i=0; i<population.size(); i++){
+				thisRoute = population.get(i);
+				thisCost = f.evaluate(thisRoute);
+				if(thisCost<worstCost){
 					worstCost = thisCost;
 					worstRoute = thisRoute;
 				}
 			}
-			prices.remove(prices.indexOf(worstRoute));
+			population.remove(population.indexOf(worstRoute));
 		}	
-		return prices;
+		return population;
 	}
 	
 	
@@ -185,34 +181,44 @@ public class AISPricingProblem {
 	 * @param populationSize
 	 * @return The population ArrayList.
 	 */
-	private ArrayList<ArrayList<Integer>> metadynamics(int d, int populationSize){	
-		populationCost.removeAll(populationCost);
+	private ArrayList<double[]> metadynamics(int d, int populationSize){
+		Random rng = new Random();
+		populationRevenue.removeAll(populationRevenue);
 		for(int u=0; u<d; u++){
-			ArrayList<Integer> thisRoute = null;
-			ArrayList<Integer> worstRoute = null;
+			double[] thisRoute = null;
+			double[] worstRoute = null;
 			double thisCost = 0;
-			double worstCost = 0;
-			for(int i=0; i<prices.size(); i++){
-				thisRoute = prices.get(i);
-				thisCost = getCostOfRoute(thisRoute);
-				if(thisCost>worstCost){
+			double worstCost = 100000;
+			for(int i=0; i<population.size(); i++){
+				thisRoute = population.get(i);
+				thisCost = f.evaluate(thisRoute);
+				if(thisCost<worstCost){
 					worstCost = thisCost;
 					worstRoute = thisRoute;
 				}
 			}
-			prices.remove(prices.indexOf(worstRoute));
+			population.remove(population.indexOf(worstRoute));
 		}
 		for(int i=0; i<d; i++){
-			prices.add(generateRandomRoute());
+			for (int u=0; u<20; u++) {
+				priceList[u] = rng.nextDouble() * 10;
+			}
+			population.add(priceList);
 		}
 		
 		for(int i=0; i<populationSize; i++){
-			populationCost.add(getCostOfRoute(prices.get(i)));
+			populationRevenue.add(f.evaluate(population.get(i)));
+		}
+		
+		for(double revenue : populationRevenue) {
+			if(revenue>bestRevenue){
+				bestRevenue = revenue;
+			}
 		}
 		
 		normaliseFitness();
 		
-		return prices;
+		return population;
 	}
 	
 	/**
@@ -220,15 +226,15 @@ public class AISPricingProblem {
 	 * 
 	 * @return The best route (Cheapest route).
 	 */
-	private ArrayList<Integer> bestRoute(){
-		ArrayList<Integer> thisRoute = null;
+	private double[] bestRoute(){
+		double[] thisRoute = null;
 		double thisCost = 0;
-		ArrayList<Integer> bestRoute = prices.get(0);
-		double bestCost1 = getCostOfRoute(bestRoute);	
-		for(int i=0; i<prices.size(); i++){
-			thisRoute = prices.get(i);
-			thisCost = getCostOfRoute(thisRoute);
-			if(thisCost<bestCost1){
+		double[] bestRoute = population.get(0);
+		double bestCost1 = f.evaluate(bestRoute);	
+		for(int i=0; i<population.size(); i++){
+			thisRoute = population.get(i);
+			thisCost = f.evaluate(thisRoute);
+			if(thisCost>bestCost1){
 				bestCost1 = thisCost;
 				bestRoute = thisRoute;
 			}
