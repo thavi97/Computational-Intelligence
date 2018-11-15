@@ -65,6 +65,11 @@ public class Particle {
 		double[] newPosition = new double[position.length];
 		for(int i = 0; i<antennaeNum; i++){
 			newPosition[i] = position[i] + velocity[i];
+			System.out.println("-----------------------------------------------------------------------");
+			System.out.println("Initial position " + Arrays.toString(position));
+			System.out.println("Velocity " + Arrays.toString(velocity));
+			System.out.println("New position " + Arrays.toString(newPosition));
+			System.out.println("-----------------------------------------------------------------------");
 		}
 		if(antennaArray.is_valid(newPosition)){			
 			position = newPosition;

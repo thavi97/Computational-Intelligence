@@ -27,8 +27,6 @@ public class PSOPricingProblem {
 //		System.out.println("Evaluating both vectors' costs");
 		double swarmPeakSLL = pricingProblem.evaluate(swarmBest);
 //		double randomSearchPeakSLL = antennaArray.evaluate(randomSearchBest);
-		
-		System.out.println(numberOfGoods);
 		System.out.println("Swarm Peak SLL: " + swarmPeakSLL + " with vector " + Arrays.toString(swarmBest));
 		
 //		System.out.println("Random Search Peak SLL: " + randomSearchPeakSLL + " with vector " + Arrays.toString(randomSearchBest));
@@ -36,11 +34,11 @@ public class PSOPricingProblem {
 	}
 
 	public static void main(String[] args) {	
-		new PSOPricingProblem(20, 5000);
+		new PSOPricingProblem(20, 10000);
 	}
 	
 	/**
-	 * @param antennaeNum Number of antennae in our array.
+	 * @param numberOfGoods Number of antennae in our array.
      * @param antennaArray An antenna array object.
      * @param setTime The time limit given for the method to run. (10000 = 10s)
      * 
@@ -57,10 +55,10 @@ public class PSOPricingProblem {
      * @return The global best position.
      * 
      */
-	private static double[] swarm(int antennaeNum, PricingProblem pricingProblem, long setTime) {
-		Good[] goods = new Good[1];
+	private static double[] swarm(int numberOfGoods, PricingProblem pricingProblem, long setTime) {
+		Good[] goods = new Good[(int) (400 + Math.sqrt(numberOfGoods))];
 		for(int i=0; i<goods.length; i++) {
-			goods[i] = new Good(antennaeNum, pricingProblem);
+			goods[i] = new Good(numberOfGoods, pricingProblem);
 		}
 		double[] gBestPos = goods[0].pBest;
 		double gBestValue = pricingProblem.evaluate(gBestPos);
@@ -69,7 +67,6 @@ public class PSOPricingProblem {
 		while(System.currentTimeMillis() < timer){
 			for(Good good : goods) {
 				double[] newPosition = good.moveNext(gBestPos);
-				System.out.println(Arrays.toString(good.position));
 				double newPosValue = pricingProblem.evaluate(newPosition);
 				if(newPosValue > gBestValue){
 					gBestPos = newPosition;

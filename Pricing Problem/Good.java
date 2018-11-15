@@ -49,6 +49,7 @@ public class Good {
 					newPosition[i] = randomPosition*maxValue;
 				}	
 			}
+			Arrays.sort(newPosition);
 		}
 		return newPosition;
 	}
@@ -71,8 +72,8 @@ public class Good {
 				pBest = position;
 				pBestValue = positionValue;
 			}
-			System.out.println(pBestValue);
 		}
+		//Arrays.sort(position);
 		velocity = getNextVelocity(gBestPos);
 		return position;
 
@@ -115,7 +116,7 @@ public class Good {
 			Random r = new Random();
 			randomVector[i] = r.nextDouble();
 		}
-		Arrays.sort(randomVector);
+		//Arrays.sort(randomVector);
 		return randomVector;
 	}
 	

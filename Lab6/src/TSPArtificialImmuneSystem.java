@@ -43,7 +43,7 @@ public class TSPArtificialImmuneSystem {
 	}
 
 	public static void main(String[] args) {	
-		new TSPArtificialImmuneSystem(5, 5000, 3, 2, 16);
+		new TSPArtificialImmuneSystem(100, 50, 0.1, 5, 16);
 	}
 	
 	/**
