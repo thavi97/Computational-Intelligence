@@ -36,7 +36,7 @@ public class PSOPricingProblem {
 	}
 
 	public static void main(String[] args) {	
-		new PSOPricingProblem(20, 10000);
+		new PSOPricingProblem(20, 5000);
 	}
 	
 	/**
@@ -58,7 +58,7 @@ public class PSOPricingProblem {
      * 
      */
 	private static double[] swarm(int antennaeNum, PricingProblem pricingProblem, long setTime) {
-		Good[] goods = new Good[(int) (20 + Math.sqrt(antennaeNum))];
+		Good[] goods = new Good[1];
 		for(int i=0; i<goods.length; i++) {
 			goods[i] = new Good(antennaeNum, pricingProblem);
 		}
@@ -69,6 +69,7 @@ public class PSOPricingProblem {
 		while(System.currentTimeMillis() < timer){
 			for(Good good : goods) {
 				double[] newPosition = good.moveNext(gBestPos);
+				System.out.println(Arrays.toString(good.position));
 				double newPosValue = pricingProblem.evaluate(newPosition);
 				if(newPosValue > gBestValue){
 					gBestPos = newPosition;

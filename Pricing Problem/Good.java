@@ -5,7 +5,7 @@ import java.util.Random;
  */
 public class Good {
 
-	private double[] position;
+	double[] position;
 	private double[] velocity;
 	public double[] pBest;
 	public double pBestValue;
@@ -71,7 +71,7 @@ public class Good {
 				pBest = position;
 				pBestValue = positionValue;
 			}
-			//System.out.println(pBestValue);
+			System.out.println(pBestValue);
 		}
 		velocity = getNextVelocity(gBestPos);
 		return position;
