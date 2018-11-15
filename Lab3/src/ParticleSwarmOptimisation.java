@@ -34,7 +34,7 @@ public class ParticleSwarmOptimisation {
 	}
 
 	public static void main(String[] args) {	
-		new ParticleSwarmOptimisation(3, 90, 10000);
+		new ParticleSwarmOptimisation(10, 20, 10000);
 	}
 	
 	/**
@@ -73,6 +73,7 @@ public class ParticleSwarmOptimisation {
 					gBestPos = newPosition;
 					gBestValue = newPosValue;
 				}
+				System.out.println("Best Revenue " + gBestValue);
 			}
 		}
 		return gBestPos;
