@@ -1,3 +1,5 @@
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -20,14 +22,37 @@ public class AISPricingProblem {
 		initialisePopulation(populationNum);
 		normaliseFitness();
 		
-		/**
-		 * Perform an AIS algorithm for a specific number of evaluations.
-		 */
-		for(int i=0; i<evaluations; i++){
-			selection(clone(populationNum, cloneSizeFactor), populationNum);
-			metadynamics(d, populationNum);
-			System.out.println("Best Revenue so far " + bestRevenue);
-		}
+		try{
+		    // Create file 
+		    FileWriter writer = new FileWriter(System.currentTimeMillis() + "AISPricingProblem Results (" + evaluations + " evaluations).csv");
+
+		    writer.append("Best Revenue");
+		    writer.append(',');
+		    writer.append("Evaluations");
+		    writer.append(',');
+		    writer.append('\n');
+		    
+		    /**
+			 * Perform an AIS algorithm for a specific number of evaluations.
+			 */
+			for(int i=0; i<evaluations; i++){
+				selection(clone(populationNum, cloneSizeFactor), populationNum);
+				metadynamics(d, populationNum);
+				writer.append(Double.toString(bestRevenue));
+			    writer.append(',');
+			    writer.append(Integer.toString(i));
+			    writer.append(',');
+			    writer.append('\n');
+				System.out.println("Best Revenue so far " + bestRevenue);
+			}
+
+		    writer.flush();
+		    writer.close();
+		    
+		    }catch (Exception e){//Catch exception if any
+		      System.err.println("Error: " + e.getMessage());
+		    }
+		
 		
 		double[] bestRoute = bestRoute();
 		System.out.println("The best list of goods after " + evaluations + " evaluations is " + Arrays.toString(bestRoute));
@@ -35,7 +60,7 @@ public class AISPricingProblem {
 	}
 
 	public static void main(String[] args) {	
-		new AISPricingProblem(5, 1000, 3, 2);
+		new AISPricingProblem(5, 100, 3, 2);
 	}
 	
 	/**

@@ -1,3 +1,4 @@
+import java.io.FileWriter;
 import java.util.Arrays;
 
 /**
@@ -16,25 +17,17 @@ public class PSOPricingProblem {
      * 
      */
 	public PSOPricingProblem(int numberOfGoods, long setTime) {
-
-		
 		
 		System.out.println("Getting the best Swarm vector... This will take " + setTime/1000 + " seconds.");
 		double[] swarmBest = swarm(numberOfGoods, pricingProblem, setTime);
-//		System.out.println("Getting the best Random Search vector... This will take " + setTime/1000 + " seconds.");
-//		double[] randomSearchBest = randomSearchPeakSLL(antennaeNum, antennaArray, setTime);
 		System.out.println("--------------------");
-//		System.out.println("Evaluating both vectors' costs");
 		double swarmPeakSLL = pricingProblem.evaluate(swarmBest);
-//		double randomSearchPeakSLL = antennaArray.evaluate(randomSearchBest);
 		System.out.println("Swarm Peak SLL: " + swarmPeakSLL + " with vector " + Arrays.toString(swarmBest));
-		
-//		System.out.println("Random Search Peak SLL: " + randomSearchPeakSLL + " with vector " + Arrays.toString(randomSearchBest));
 
 	}
 
 	public static void main(String[] args) {	
-		new PSOPricingProblem(20, 10000);
+		new PSOPricingProblem(20, 5000);
 	}
 	
 	/**
@@ -64,17 +57,40 @@ public class PSOPricingProblem {
 		double gBestValue = pricingProblem.evaluate(gBestPos);
 		
 		long timer = System.currentTimeMillis() + setTime;
-		while(System.currentTimeMillis() < timer){
-			for(Good good : goods) {
-				double[] newPosition = good.moveNext(gBestPos);
-				double newPosValue = pricingProblem.evaluate(newPosition);
-				if(newPosValue > gBestValue){
-					gBestPos = newPosition;
-					gBestValue = newPosValue;
-				}
-				System.out.println("Best Revenue " + gBestValue);
-			}
-		}
+		try{
+		    // Create file 
+		    FileWriter writer = new FileWriter(System.currentTimeMillis() + "PSOPricingProblem Results ( " + setTime/1000 + " seconds).csv");
+
+		    writer.append("Best Revenue");
+		    writer.append(',');
+		    writer.append("Seconds");
+		    writer.append(',');
+		    writer.append('\n');	    
+		    
+		    while(System.currentTimeMillis() < timer){
+		    	for(Good good : goods) {
+		    		double[] newPosition = good.moveNext(gBestPos);
+		    		double newPosValue = pricingProblem.evaluate(newPosition);
+		    		if(newPosValue > gBestValue){
+		    			gBestPos = newPosition;
+		    			gBestValue = newPosValue;
+		    		}
+		    		writer.append(Double.toString(gBestValue));
+				    writer.append(',');
+				    writer.append(Double.toString(((timer - System.currentTimeMillis() - setTime) * -1)/1000));
+				    writer.append(',');
+				    writer.append('\n');
+		    		System.out.println("Best Revenue " + gBestValue);
+		    	}
+		    }
+		    
+		    writer.flush();
+		    writer.close();
+		    
+		}catch (Exception e){//Catch exception if any
+		      System.err.println("Error: " + e.getMessage());
+		 }
+		
 		return gBestPos;
 	}
 	
