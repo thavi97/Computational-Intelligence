@@ -1,4 +1,3 @@
-import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,11 +23,11 @@ public class AISPricingProblem {
 		
 		try{
 		    // Create file 
-		    FileWriter writer = new FileWriter(System.currentTimeMillis() + "AISPricingProblem Results (" + evaluations + " evaluations).csv");
+		    FileWriter writer = new FileWriter("Graphs\\"+System.currentTimeMillis() + "AISPricingProblem Results (" + evaluations + " evaluations).csv");
 
-		    writer.append("Best Revenue");
-		    writer.append(',');
 		    writer.append("Evaluations");
+		    writer.append(',');
+		    writer.append("Best Revenue");
 		    writer.append(',');
 		    writer.append('\n');
 		    
@@ -38,9 +37,9 @@ public class AISPricingProblem {
 			for(int i=0; i<evaluations; i++){
 				selection(clone(populationNum, cloneSizeFactor), populationNum);
 				metadynamics(d, populationNum);
-				writer.append(Double.toString(bestRevenue));
+				writer.append(Integer.toString(i));
 			    writer.append(',');
-			    writer.append(Integer.toString(i));
+			    writer.append(Double.toString(bestRevenue));
 			    writer.append(',');
 			    writer.append('\n');
 				System.out.println("Best Revenue so far " + bestRevenue);

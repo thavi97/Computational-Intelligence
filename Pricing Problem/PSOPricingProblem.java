@@ -59,11 +59,11 @@ public class PSOPricingProblem {
 		long timer = System.currentTimeMillis() + setTime;
 		try{
 		    // Create file 
-		    FileWriter writer = new FileWriter(System.currentTimeMillis() + "PSOPricingProblem Results ( " + setTime/1000 + " seconds).csv");
+		    FileWriter writer = new FileWriter("Graphs\\"+System.currentTimeMillis() + "PSOPricingProblem Results ( " + setTime/1000 + " seconds).csv");
 
-		    writer.append("Best Revenue");
-		    writer.append(',');
 		    writer.append("Seconds");
+		    writer.append(',');
+		    writer.append("Best Revenue");
 		    writer.append(',');
 		    writer.append('\n');	    
 		    
@@ -75,9 +75,10 @@ public class PSOPricingProblem {
 		    			gBestPos = newPosition;
 		    			gBestValue = newPosValue;
 		    		}
-		    		writer.append(Double.toString(gBestValue));
+		    		
+		    		writer.append(Double.toString(((timer - System.currentTimeMillis() - setTime) * -1)));
 				    writer.append(',');
-				    writer.append(Double.toString(((timer - System.currentTimeMillis() - setTime) * -1)/1000));
+				    writer.append(Double.toString(gBestValue));			    
 				    writer.append(',');
 				    writer.append('\n');
 		    		System.out.println("Best Revenue " + gBestValue);
