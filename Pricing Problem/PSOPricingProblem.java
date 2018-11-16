@@ -18,7 +18,7 @@ public class PSOPricingProblem {
      */
 	public PSOPricingProblem(int numberOfGoods, long setTime) {
 		
-		System.out.println("Getting the best Swarm vector... This will take " + setTime/1000 + " seconds.");
+		System.out.println("Getting the best Swarm vector... This will take " + setTime/1000 + "s.");
 		double[] swarmBest = swarm(numberOfGoods, pricingProblem, setTime);
 		System.out.println("--------------------");
 		double swarmPeakSLL = pricingProblem.evaluate(swarmBest);
@@ -27,7 +27,7 @@ public class PSOPricingProblem {
 	}
 
 	public static void main(String[] args) {	
-		new PSOPricingProblem(20, 5000);
+		new PSOPricingProblem(20, 20000);
 	}
 	
 	/**
@@ -39,7 +39,7 @@ public class PSOPricingProblem {
      * the particles' positions within a given time limit.
      * 
      * The number of particles is given by the equation:
-     * 20 + sqrt(D) where D is problem dimension.
+     * 400 + sqrt(D) where D is problem dimension.
      * 
      * The particles will be moving to a new position and then will be updating their
      * personal best (pBest) costs. If the pBest cost is the lowest of all the particles, it then
@@ -49,7 +49,7 @@ public class PSOPricingProblem {
      * 
      */
 	private static double[] swarm(int numberOfGoods, PricingProblem pricingProblem, long setTime) {
-		Good[] goods = new Good[(int) (400 + Math.sqrt(numberOfGoods))];
+		Good[] goods = new Good[(int) (500 + Math.sqrt(numberOfGoods))];
 		for(int i=0; i<goods.length; i++) {
 			goods[i] = new Good(numberOfGoods, pricingProblem);
 		}
@@ -58,10 +58,13 @@ public class PSOPricingProblem {
 		
 		long timer = System.currentTimeMillis() + setTime;
 		try{
-		    // Create file 
+			/**
+		     * This block will record all the results and save them into a csv file
+		     * to be used for graphing.
+		     */
 		    FileWriter writer = new FileWriter("Graphs\\"+System.currentTimeMillis() + "PSOPricingProblem Results ( " + setTime/1000 + " seconds).csv");
 
-		    writer.append("Seconds");
+		    writer.append("Time (ms)");
 		    writer.append(',');
 		    writer.append("Best Revenue");
 		    writer.append(',');

@@ -16,16 +16,27 @@ public class AISPricingProblem {
 	private double bestRevenue;
 	PricingProblem f = PricingProblem.courseworkInstance();
 
-	public AISPricingProblem(int populationNum, int evaluations, double cloneSizeFactor, int d) {
+	public AISPricingProblem(int populationNum, long setTime, double cloneSizeFactor, int d) {
 		
 		initialisePopulation(populationNum);
 		normaliseFitness();
 		
 		try{
-		    // Create file 
-		    FileWriter writer = new FileWriter("Graphs\\"+System.currentTimeMillis() + "AISPricingProblem Results (" + evaluations + " evaluations).csv");
-
-		    writer.append("Evaluations");
+		    /**
+		     * This block will record all the results and save them into a csv file
+		     * to be used for graphing.
+		     */
+		    FileWriter writer = new FileWriter("Graphs\\"+System.currentTimeMillis() + "AISPricingProblem Results (" + setTime/1000 + "s).csv");
+		    
+		    writer.append("Population Number: " + populationNum);
+		    writer.append(',');
+		    writer.append("Clone Size Factor: " + cloneSizeFactor);
+		    writer.append(',');
+		    writer.append("Metadynamics Removal: " + d);
+		    writer.append(',');
+		    writer.append('\n');
+		    
+		    writer.append("Time (ms)");
 		    writer.append(',');
 		    writer.append("Best Revenue");
 		    writer.append(',');
@@ -34,10 +45,11 @@ public class AISPricingProblem {
 		    /**
 			 * Perform an AIS algorithm for a specific number of evaluations.
 			 */
-			for(int i=0; i<evaluations; i++){
+		    long timer = System.currentTimeMillis() + setTime;
+		    while(System.currentTimeMillis() < timer){
 				selection(clone(populationNum, cloneSizeFactor), populationNum);
 				metadynamics(d, populationNum);
-				writer.append(Integer.toString(i));
+	    		writer.append(Double.toString(((timer - System.currentTimeMillis() - setTime) * -1)));
 			    writer.append(',');
 			    writer.append(Double.toString(bestRevenue));
 			    writer.append(',');
@@ -54,17 +66,17 @@ public class AISPricingProblem {
 		
 		
 		double[] bestRoute = bestRoute();
-		System.out.println("The best list of goods after " + evaluations + " evaluations is " + Arrays.toString(bestRoute));
+		System.out.println("The best list of goods after " + setTime/1000 + " seconds is " + Arrays.toString(bestRoute));
 		System.out.println("Its revenue is " + f.evaluate(bestRoute));
 	}
 
 	public static void main(String[] args) {	
-		new AISPricingProblem(5, 100, 3, 2);
+		new AISPricingProblem(5, 20000, 3, 2);
 	}
 	
 	/**
-	 * Fills the population ArrayList with a bunch of random routes and also
-	 * stores the routes' costs in a separate ArrayList.
+	 * Fills the population ArrayList with a bunch of random shopping lists and also
+	 * stores the lists' costs in a separate ArrayList.
 	 * 
 	 * We also fill in the bestCost variable so it can be used for normalisation.
 	 * 
@@ -99,9 +111,9 @@ public class AISPricingProblem {
 	}
 
 	/**
-	 * Gets all the costs of each route and normalises them.
+	 * Gets all the costs of each shopping list and normalises them.
 	 * 
-	 * You normalise the cost be dividing the cost of the route by the cheapest cost.
+	 * You normalise the cost be dividing the cost of the shopping list by the cheapest cost.
 	 * 
 	 * @return An ArrayList of normalised fitnesses.
 	 */
@@ -136,13 +148,13 @@ public class AISPricingProblem {
 	 * 
 	 * First it calculates the mutation rate using the given formula.
 	 * 
-	 * Then it calculates the block length of the selected values in the route.
+	 * Then it calculates the block length of the selected values in the shopping list.
 	 * 
-	 * For every route, the block starts at a random index.
+	 * For every shopping list, the block starts at a random index.
 	 * 
 	 * Finally, select all values in the selected block and reverse the order of them.
 	 * 
-	 * Now you have a mutated route with reversed block values.
+	 * Now you have a mutated shopping list with reversed block values.
 	 * 
 	 * @param rho
 	 * @param priceList
@@ -178,26 +190,26 @@ public class AISPricingProblem {
 	private ArrayList<double[]> selection(ArrayList<double[]> clonePool, int populationSize){
 		population.addAll(clonePool);
 		while(population.size() > populationSize){
-			double[] thisRoute = null;
-			double[] worstRoute = null;
-			double thisCost = 0;
-			double worstCost = 100000;
+			double[] thisPriceList = null;
+			double[] worstPriceList = population.get(0);
+			double thisRevenue = 0;
+			double worstRevenue = f.evaluate(worstPriceList);
 			for(int i=0; i<population.size(); i++){
-				thisRoute = population.get(i);
-				thisCost = f.evaluate(thisRoute);
-				if(thisCost<worstCost){
-					worstCost = thisCost;
-					worstRoute = thisRoute;
+				thisPriceList = population.get(i);
+				thisRevenue = f.evaluate(thisPriceList);
+				if(thisRevenue<worstRevenue){
+					worstRevenue = thisRevenue;
+					worstPriceList = thisPriceList;
 				}
 			}
-			population.remove(population.indexOf(worstRoute));
+			population.remove(population.indexOf(worstPriceList));
 		}	
 		return population;
 	}
 	
 	
 	/**
-	 * Removes the d worst routes and adds in 2 random ones.
+	 * Removes the d worst shopping lists and adds in 2 random ones.
 	 * 
 	 * Afterwards we refill the populationCost ArrayList and normalisedFitness ArrayList so it can be used for the next iteration.
 	 * 
@@ -209,19 +221,19 @@ public class AISPricingProblem {
 		Random rng = new Random();
 		populationRevenue.removeAll(populationRevenue);
 		for(int u=0; u<d; u++){
-			double[] thisRoute = null;
-			double[] worstRoute = null;
-			double thisCost = 0;
-			double worstCost = 100000;
+			double[] thisPriceList = null;
+			double[] worstPriceList = population.get(0);
+			double thisRevenue = 0;
+			double worstRevenue = f.evaluate(worstPriceList);
 			for(int i=0; i<population.size(); i++){
-				thisRoute = population.get(i);
-				thisCost = f.evaluate(thisRoute);
-				if(thisCost<worstCost){
-					worstCost = thisCost;
-					worstRoute = thisRoute;
+				thisPriceList = population.get(i);
+				thisRevenue = f.evaluate(thisPriceList);
+				if(thisRevenue<worstRevenue){
+					worstRevenue = thisRevenue;
+					worstPriceList = thisPriceList;
 				}
 			}
-			population.remove(population.indexOf(worstRoute));
+			population.remove(population.indexOf(worstPriceList));
 		}
 		for(int i=0; i<d; i++){
 			for (int u=0; u<20; u++) {
@@ -251,19 +263,19 @@ public class AISPricingProblem {
 	 * @return The best route (Cheapest route).
 	 */
 	private double[] bestRoute(){
-		double[] thisRoute = null;
-		double thisCost = 0;
-		double[] bestRoute = population.get(0);
-		double bestCost1 = f.evaluate(bestRoute);	
+		double[] thisPriceList = null;
+		double thisRevenue = 0;
+		double[] bestPriceList = population.get(0);
+		double bestRevenue1 = f.evaluate(bestPriceList);	
 		for(int i=0; i<population.size(); i++){
-			thisRoute = population.get(i);
-			thisCost = f.evaluate(thisRoute);
-			if(thisCost>bestCost1){
-				bestCost1 = thisCost;
-				bestRoute = thisRoute;
+			thisPriceList = population.get(i);
+			thisRevenue = f.evaluate(thisPriceList);
+			if(thisRevenue>bestRevenue1){
+				bestRevenue1 = thisRevenue;
+				bestPriceList = thisPriceList;
 			}
 		}
-		return bestRoute;
+		return bestPriceList;
 	}
 	
 }
