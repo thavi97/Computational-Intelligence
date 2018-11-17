@@ -22,7 +22,7 @@ public class PSOPricingProblem {
 		double[] swarmBest = swarm(numberOfGoods, pricingProblem, setTime);
 		System.out.println("--------------------");
 		double swarmPeakSLL = pricingProblem.evaluate(swarmBest);
-		System.out.println("Swarm Peak SLL: " + swarmPeakSLL + " with vector " + Arrays.toString(swarmBest));
+		System.out.println("Best Revenue: " + swarmPeakSLL + " with vector " + Arrays.toString(swarmBest));
 
 	}
 
@@ -31,29 +31,29 @@ public class PSOPricingProblem {
 	}
 	
 	/**
-	 * @param numberOfGoods Number of antennae in our array.
-     * @param antennaArray An antenna array object.
+	 * @param numberOfGoods Number of goods in our priceList.
+     * @param pricingProblem A PricingProblem instance.
      * @param setTime The time limit given for the method to run. (10000 = 10s)
      * 
-     * Create a swarm of particles and return the best position out of all
-     * the particles' positions within a given time limit.
+     * Create a swarm of priceLists and return the best position out of all
+     * the priceLists' positions within a given time limit.
      * 
-     * The number of particles is given by the equation:
+     * The number of priceLists is given by the equation:
      * 400 + sqrt(D) where D is problem dimension.
      * 
-     * The particles will be moving to a new position and then will be updating their
-     * personal best (pBest) costs. If the pBest cost is the lowest of all the particles, it then
+     * The priceLists will be moving to a new position and then will be updating their
+     * personal best (pBest) costs. If the pBest cost is the lowest of all the priceLists, it then
      * becomes the global best position (gBestPos).
      * 
      * @return The global best position.
      * 
      */
 	private static double[] swarm(int numberOfGoods, PricingProblem pricingProblem, long setTime) {
-		Good[] goods = new Good[(int) (500 + Math.sqrt(numberOfGoods))];
-		for(int i=0; i<goods.length; i++) {
-			goods[i] = new Good(numberOfGoods, pricingProblem);
+		PSOPriceList[] priceLists = new PSOPriceList[(int) (500 + Math.sqrt(numberOfGoods))];
+		for(int i=0; i<priceLists.length; i++) {
+			priceLists[i] = new PSOPriceList(numberOfGoods, pricingProblem);
 		}
-		double[] gBestPos = goods[0].pBest;
+		double[] gBestPos = priceLists[0].pBest;
 		double gBestValue = pricingProblem.evaluate(gBestPos);
 		
 		long timer = System.currentTimeMillis() + setTime;
@@ -71,8 +71,8 @@ public class PSOPricingProblem {
 		    writer.append('\n');	    
 		    
 		    while(System.currentTimeMillis() < timer){
-		    	for(Good good : goods) {
-		    		double[] newPosition = good.moveNext(gBestPos);
+		    	for(PSOPriceList priceList : priceLists) {
+		    		double[] newPosition = priceList.moveNext(gBestPos);
 		    		double newPosValue = pricingProblem.evaluate(newPosition);
 		    		if(newPosValue > gBestValue){
 		    			gBestPos = newPosition;

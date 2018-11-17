@@ -3,7 +3,7 @@ import java.util.Random;
 /**
  * @author Thavi Tennakoon
  */
-public class Good {
+public class PSOPriceList {
 
 	double[] position;
 	private double[] velocity;
@@ -16,16 +16,15 @@ public class Good {
 
 	
 	/**
-     * Construct a single Particle to be used in the swarm.
-     * @param numberOfGoods Number of antennae in our array.
-     * @param steeringAngle Desired direction of the main beam in degrees.
-     * @param pricingProblem An antenna array object.
-     * double[] position is the initial position of the particle and is set to a randomly generated position vector.
-     * double[] pBest is the personal best position and is initially set to to current position of the particle.
+     * Construct a single PriceList to be used in the swarm.
+     * @param numberOfGoods Number of goods in our priceLists.
+     * @param pricingProblem An PricingProblem instance.
+     * double[] position contains the initial values of the priceList and is set to a randomly generated prices between 1 and 10.
+     * double[] pBest is the personal best position and is initially set to to current position of the priceList.
      * double pBestValue is set to the evaluated cost of the personal best position.
      * double[] velocity is initially set to ((position - random position vector)/2).
      */
-	public Good(int numberOfGoods, PricingProblem pricingProblem){
+	public PSOPriceList(int numberOfGoods, PricingProblem pricingProblem){
 		PSOPricingProblem.pricingProblem = pricingProblem;
 		this.numberOfGoods = numberOfGoods;
 		position = generateRandomPosition(numberOfGoods);
@@ -35,7 +34,7 @@ public class Good {
 	}
 	
 	/**
-     * Generates a random position vector for the particle.
+     * Generates a random position vector for the priceLists.
      * @param numberOfGoods Number of antennae in our array.
      * @return The newly generated position.
      */
@@ -55,9 +54,9 @@ public class Good {
 	}
 	
 	/**
-     * Move the particle to the next position.
+     * Move the priceLists to the next position.
      * Current position + Next Velocity.
-     * @param gBestPos The Global Best Position out of all the particles in the array.
+     * @param gBestPos The Global Best Position out of all the priceLists in the swarm.
      * @return The newly calculated position.
      */
 	public double[] moveNext(double[] gBestPos){
@@ -79,8 +78,8 @@ public class Good {
 	}
 	
 	/**
-     * Calculate the next velocity of a particle.
-     * @param gBestPos The Global Best Position out of all the particles in the array.
+     * Calculate the next velocity of a priceLists.
+     * @param gBestPos The Global Best Position out of all the priceLists in the swarm.
      * @return The newly calculated velocity.
      */
 	private double[] getNextVelocity(double[] gBestPos){
@@ -106,7 +105,7 @@ public class Good {
 	/**
      * Generate a random valid vector.
      * Used to give values to r1 and r2.
-     * @param numberOfGoods Number of antennae in our array.
+     * @param numberOfGoods Number of goods in our priceList.
      * @return The newly generated random vector.
      */
 	private double[] generateRandomVector(int numberOfGoods){
