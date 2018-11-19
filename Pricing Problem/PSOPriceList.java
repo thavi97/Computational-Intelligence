@@ -35,7 +35,7 @@ public class PSOPriceList {
 	
 	/**
      * Generates a random position vector for the priceLists.
-     * @param numberOfGoods Number of antennae in our array.
+     * @param numberOfGoods Number of prices in our price list.
      * @return The newly generated position.
      */
 	public static double[] generateRandomPosition(int numberOfGoods){
