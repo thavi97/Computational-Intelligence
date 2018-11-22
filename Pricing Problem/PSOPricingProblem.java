@@ -10,7 +10,6 @@ public class PSOPricingProblem {
 	
 	/**
 	 * @param numberOfGoods Number of antennae in our array.
-     * @param steeringAngle Desired direction of the main beam in degrees.
      * @param setTime The time limit given for the method to run. (10000 = 10s)
      * 
      * Calculate the peakSLL for the swarm and random search.

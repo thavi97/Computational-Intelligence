@@ -109,8 +109,8 @@ public class PSOPriceList {
      */
 	private double[] generateRandomVector(int numberOfGoods){
 		double[] randomVector = new double[numberOfGoods];
+		Random r = new Random();
 		for(int i=0; i<numberOfGoods; i++){
-			Random r = new Random();
 			randomVector[i] = r.nextDouble();
 		}
 		return randomVector;
