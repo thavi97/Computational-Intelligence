@@ -41,13 +41,12 @@ public class PSOPriceList {
 	public static double[] generateRandomPosition(int numberOfGoods){
 		double[] newPosition = new double[numberOfGoods];
 		double maxValue = 10.0;
-		while(!PSOPricingProblem.pricingProblem.is_valid(newPosition)){
-			for(int i = 0; i < numberOfGoods; i++){
-				double randomPosition = Math.random();
-				if(randomPosition<maxValue && randomPosition>0) {
-					newPosition[i] = randomPosition*maxValue;
-				}	
-			}
+		for(int i = 0; i < numberOfGoods; i++){
+			double randomPosition = Math.random();
+			newPosition[i] = randomPosition*maxValue;
+		}
+		if(!PSOPricingProblem.pricingProblem.is_valid(newPosition)){
+			generateRandomPosition(numberOfGoods);
 		}
 		return newPosition;
 	}

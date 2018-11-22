@@ -76,6 +76,7 @@ public class PSOPricingProblem {
 		    		if(newPosValue > gBestValue){
 		    			gBestPos = newPosition;
 		    			gBestValue = newPosValue;
+		    			System.out.println("Best Revenue " + gBestValue);
 		    		}
 		    		
 		    		writer.append(Double.toString(((timer - System.currentTimeMillis() - setTime) * -1)));
@@ -83,7 +84,6 @@ public class PSOPricingProblem {
 				    writer.append(Double.toString(gBestValue));			    
 				    writer.append(',');
 				    writer.append('\n');
-		    		System.out.println("Best Revenue " + gBestValue);
 		    	}
 		    }
 		    
