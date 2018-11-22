@@ -27,7 +27,7 @@ public class PSOPricingProblem {
 	}
 
 	public static void main(String[] args) {	
-		new PSOPricingProblem(20, 20000);
+		new PSOPricingProblem(20, 10000);
 	}
 	
 	/**
@@ -49,7 +49,7 @@ public class PSOPricingProblem {
      * 
      */
 	private static double[] swarm(int numberOfGoods, PricingProblem pricingProblem, long setTime) {
-		PSOPriceList[] priceLists = new PSOPriceList[(int) (500 + Math.sqrt(numberOfGoods))];
+		PSOPriceList[] priceLists = new PSOPriceList[(int) (400 + Math.sqrt(numberOfGoods))];
 		for(int i=0; i<priceLists.length; i++) {
 			priceLists[i] = new PSOPriceList(numberOfGoods, pricingProblem);
 		}

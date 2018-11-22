@@ -48,7 +48,6 @@ public class PSOPriceList {
 					newPosition[i] = randomPosition*maxValue;
 				}	
 			}
-			Arrays.sort(newPosition);
 		}
 		return newPosition;
 	}
@@ -91,7 +90,7 @@ public class PSOPriceList {
 		double[] r2 = generateRandomVector(numberOfGoods);
 		double[] pBestDiff = getVectorDifference(pBest, position);
 		double[] gBestDiff = getVectorDifference(gBestPos, position);
-		for(int i=0; i<numberOfGoods-1; i++){
+		for(int i=0; i<numberOfGoods; i++){
 			inertia[i] = theta*velocity[i]; 
 			cognitive[i] = phi1*r1[i]*pBestDiff[i]; 
 			social[i] = phi2*r2[i]*gBestDiff[i]; 
