@@ -56,18 +56,18 @@ public class PSOPricingProblem {
 		double gBestValue = pricingProblem.evaluate(gBestPos);
 		
 		long timer = System.currentTimeMillis() + setTime;
-		try{
-			/**
-		     * This block will record all the results and save them into a csv file
-		     * to be used for graphing.
-		     */
-		    FileWriter writer = new FileWriter("Graphs\\"+System.currentTimeMillis() + "PSOPricingProblem Results ( " + setTime/1000 + " seconds).csv");
-
-		    writer.append("Time (ms)");
-		    writer.append(',');
-		    writer.append("Best Revenue");
-		    writer.append(',');
-		    writer.append('\n');	    
+//		try{
+//			/**
+//		     * This block will record all the results and save them into a csv file
+//		     * to be used for graphing.
+//		     */
+//		    FileWriter writer = new FileWriter("Graphs\\"+System.currentTimeMillis() + "PSOPricingProblem Results ( " + setTime/1000 + " seconds).csv");
+//
+//		    writer.append("Time (ms)");
+//		    writer.append(',');
+//		    writer.append("Best Revenue");
+//		    writer.append(',');
+//		    writer.append('\n');	    
 		    
 		    while(System.currentTimeMillis() < timer){
 		    	for(PSOPriceList priceList : priceLists) {
@@ -79,20 +79,20 @@ public class PSOPricingProblem {
 		    			System.out.println("Best Revenue " + gBestValue);
 		    		}
 		    		
-		    		writer.append(Double.toString(((timer - System.currentTimeMillis() - setTime) * -1)));
-				    writer.append(',');
-				    writer.append(Double.toString(gBestValue));			    
-				    writer.append(',');
-				    writer.append('\n');
+//		    		writer.append(Double.toString(((timer - System.currentTimeMillis() - setTime) * -1)));
+//				    writer.append(',');
+//				    writer.append(Double.toString(gBestValue));			    
+//				    writer.append(',');
+//				    writer.append('\n');
 		    	}
 		    }
 		    
-		    writer.flush();
-		    writer.close();
-		    
-		}catch (Exception e){//Catch exception if any
-		      System.err.println("Error: " + e.getMessage());
-		 }
+//		    writer.flush();
+//		    writer.close();
+//		    
+//		}catch (Exception e){//Catch exception if any
+//		      System.err.println("Error: " + e.getMessage());
+//		 }
 		
 		return gBestPos;
 	}

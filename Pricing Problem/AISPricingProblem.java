@@ -21,26 +21,26 @@ public class AISPricingProblem {
 		initialisePopulation(populationNum);
 		normaliseFitness();
 		
-		try{
-		    /**
-		     * This block will record all the results and save them into a csv file
-		     * to be used for graphing.
-		     */
-		    FileWriter writer = new FileWriter("Graphs\\"+System.currentTimeMillis() + "AISPricingProblem Results (" + setTime/1000 + "s).csv");
-		    
-		    writer.append("Population Number: " + populationNum);
-		    writer.append(',');
-		    writer.append("Clone Size Factor: " + cloneSizeFactor);
-		    writer.append(',');
-		    writer.append("Metadynamics Removal: " + d);
-		    writer.append(',');
-		    writer.append('\n');
-		    
-		    writer.append("Time (ms)");
-		    writer.append(',');
-		    writer.append("Best Revenue");
-		    writer.append(',');
-		    writer.append('\n');
+//		try{
+//		    /**
+//		     * This block will record all the results and save them into a csv file
+//		     * to be used for graphing.
+//		     */
+//		    FileWriter writer = new FileWriter("Graphs\\"+System.currentTimeMillis() + "AISPricingProblem Results (" + setTime/1000 + "s).csv");
+//		    
+//		    writer.append("Population Number: " + populationNum);
+//		    writer.append(',');
+//		    writer.append("Clone Size Factor: " + cloneSizeFactor);
+//		    writer.append(',');
+//		    writer.append("Metadynamics Removal: " + d);
+//		    writer.append(',');
+//		    writer.append('\n');
+//		    
+//		    writer.append("Time (ms)");
+//		    writer.append(',');
+//		    writer.append("Best Revenue");
+//		    writer.append(',');
+//		    writer.append('\n');
 		    
 		    /**
 			 * Perform an AIS algorithm for a specific number of evaluations.
@@ -49,20 +49,20 @@ public class AISPricingProblem {
 		    while(System.currentTimeMillis() < timer){
 				selection(clone(populationNum, cloneSizeFactor), populationNum);
 				metadynamics(d, populationNum);
-	    		writer.append(Double.toString(((timer - System.currentTimeMillis() - setTime) * -1)));
-			    writer.append(',');
-			    writer.append(Double.toString(bestRevenue));
-			    writer.append(',');
-			    writer.append('\n');
+//	    		writer.append(Double.toString(((timer - System.currentTimeMillis() - setTime) * -1)));
+//			    writer.append(',');
+//			    writer.append(Double.toString(bestRevenue));
+//			    writer.append(',');
+//			    writer.append('\n');
 				System.out.println("Best Revenue so far " + bestRevenue);
 			}
 
-		    writer.flush();
-		    writer.close();
-		    
-		    }catch (Exception e){//Catch exception if any
-		      System.err.println("Error: " + e.getMessage());
-		    }
+//		    writer.flush();
+//		    writer.close();
+//		    
+//		    }catch (Exception e){//Catch exception if any
+//		      System.err.println("Error: " + e.getMessage());
+//		    }
 		
 		
 		double[] bestRoute = bestRoute();
